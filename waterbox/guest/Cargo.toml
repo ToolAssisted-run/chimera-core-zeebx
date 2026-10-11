@@ -18,6 +18,12 @@ crate-type = ["staticlib", "rlib"]
 # The Zeebx checkout at a fixed commit with this repository's patches
 # applied. No default features: no window, no sound card, no network.
 zeebx = { path = "../../extern/zeebx", default-features = false }
+# the settings and the project's list of files are JSON
+serde_json = "1"
+
+[build-dependencies]
+# compiles the in-memory filesystem (../driver/memfs.cc)
+cc = "1"
 
 [profile.release]
 opt-level = 2

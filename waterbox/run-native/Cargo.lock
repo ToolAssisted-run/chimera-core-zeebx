@@ -815,7 +815,7 @@ dependencies = [
 name = "run-native"
 version = "0.0.0"
 dependencies = [
- "zeebx",
+ "zeebx_guest",
 ]
 
 [[package]]
@@ -1277,6 +1277,15 @@ dependencies = [
  "symphonia",
  "zip",
  "zune-jpeg",
+]
+
+[[package]]
+name = "zeebx_guest"
+version = "0.0.0"
+dependencies = [
+ "cc",
+ "serde_json",
+ "zeebx",
 ]
 
 [[package]]

@@ -4,11 +4,11 @@ version = "0.0.0"
 edition = "2021"
 publish = false
 
-# The native runner: Zeebx driven a frame at a time on the host, the way the
-# core drives it in the sandbox. A first version over the emulator's session,
-# to see the games run before the core's own functions exist.
+# The native runner: the core (../guest) built for the host and called the
+# way Chimera's engine calls it. What it prints is what the sandboxed core is
+# compared with.
 [dependencies]
-zeebx = { path = "../../extern/zeebx", default-features = false }
+zeebx_guest = { path = "../guest" }
 
 [profile.release]
 opt-level = 2

@@ -6,10 +6,13 @@ A Chimera core for the Zeebo, the console TecToy sold in Brazil and Mexico
 from 2009, built on Zeebx (https://github.com/ZeebxTeam/zeebx-emu). Requested
 in chimera issue 240. The owner, 2026-10-11: "Let's give Zeebo a try first".
 
-Where it stands (2026-10-11): the emulator builds natively and for Chimera's
-sandbox, and both of the owner's test games reach their main menu on the
-native build. The core's own functions (what Chimera calls each frame) are
-not written yet. Nothing is published.
+Where it stands (2026-10-11): both of the owner's test games run in
+Chimera's sandbox a frame at a time and give exactly what the native build
+gives - the same clock, instruction count, picture and sound at every checked
+frame - including with a savestate saved and loaded before every frame, and
+with a savestate carried into another process. There is no package for
+Chimera yet (no controller, settings or file declarations), no test script,
+and nothing is published.
 
 ## The version it builds
 
@@ -99,6 +102,58 @@ function now takes 8. With that line fixed in a scratch copy: 608 passed,
 
 With those two, the whole emulator and its libraries compile for the
 sandbox (65 s on 20 threads). Linking `core.wbx` is the next step.
+
+## The core, natively and in the sandbox (2026-10-11)
+
+`waterbox/guest` is the core: the functions Chimera's engine calls, over
+Zeebx's `Session`. It is built twice - for the host, where
+`waterbox/run-native` calls it, and for the sandbox, as `core.wbx`, which
+`waterbox/run-wbx` runs through miniBox. Both runners take the same options
+and print the same lines, so their outputs are compared with `cmp`.
+
+What was decided:
+
+- **A frame is 1/60 of a second of the game's clock.** Frame n ends when the
+  clock reaches n x 1000 / 60 milliseconds (patch 0001,
+  `Session::run_until_ms`). The clock can jump past that when the game is
+  only waiting; then the next frames run nothing until their time comes.
+  Every frame carries the same amount of sound: 735 stereo samples at
+  44.1 kHz.
+- **The date is a setting** (`rtc_start`, default 2010-01-01), given to the
+  machine before it starts (patch 0001).
+- **Files are in memory.** The in-memory filesystem written for the Vita3K
+  core and used by the Xenia core (`waterbox/driver/memfs.cc`) sits under
+  the C library in both builds. The game's package is read through it, and
+  everything Zeebx unpacks or a game saves lives in it, dated the moment
+  the console was switched on. One change was needed: Rust's standard
+  library asks whether `statx` exists by calling it with null pointers, and
+  the filesystem's version crashed on that.
+- **The picture is drawn on one thread in the sandbox.** miniBox reports one
+  processor, so Zeebx's renderer uses one band and starts no thread. The
+  native build uses as many as the host has; the pictures are the same.
+- **The controller**: 14 buttons (Up, Down, Left, Right, 1, 2, 3, 4, ZL, ZR,
+  Start, Back, and the two stick presses) and 4 axes (two sticks, -128 to
+  127), for each of two ports.
+
+What was measured, sandbox against native, lines printed every 60 frames:
+
+| run | result |
+| --- | --- |
+| 279036, 900 frames, button 1 held for 6 frames from frame 400 | same lines |
+| the same with a savestate saved and loaded before every frame | same lines |
+| the same, saved after frame 450 (23.7 MB) and finished by another process | ends on the same line |
+| Quake II, 900 frames | same lines |
+
+A press changes the run: without it the instruction count at frame 900 is
+586,516,928, with it 586,839,418, and the picture differs.
+
+Host time for 900 frames (15 s of game clock): 1.5 to 2 s natively, 9.4 s
+(279036) and 15.2 s (Quake II) in the sandbox. Where the sandbox's extra
+time goes has not been measured yet.
+
+Building `core.wbx` turned up one more thing: the `dynarmic` crate tells
+cargo to find Dynarmic's libraries at link time, so they are not inside the
+core's static library and `build-guest.sh` names them in the link.
 
 ## What is the owner's
 

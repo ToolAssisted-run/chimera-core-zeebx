@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Writes the next patch of the series: whatever the extern/touchHLE working
+"""Writes the next patch of the series: whatever the extern/zeebx working
 tree changes beyond what the series already leaves behind.
 
 porting-a-core.md's trap: `git diff` on a file two patches touch produces a
@@ -21,7 +21,7 @@ import tempfile
 
 here = os.path.dirname(os.path.abspath(__file__))
 root = os.path.dirname(here)
-tree = os.path.join(root, 'extern', 'touchHLE')
+tree = os.path.join(root, 'extern', 'zeebx')
 patches = os.path.join(root, 'patches')
 
 

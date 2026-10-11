@@ -1,50 +1,18 @@
-// Guest-only overrides for libc calls whose syscalls the miniBox surface
-// rejects (by design: no host filesystem). One static link means defining
-// these here shadows musl's versions. Everything reports a read-only
-// filesystem: touchHLE keeps the app's files in the machine's own memory
-// (patch 0003), so nothing it does should reach these. Taken from
-// chimera-core-azahar, which proved the dynarmic stubs below.
+// Sandbox-only replacements for C library calls whose system calls miniBox
+// does not have. One static link means defining these here takes the place
+// of musl's versions. The file calls (open, mkdir, rename and the rest) are
+// not here: the in-memory filesystem (driver/memfs.cc) answers those.
+// The Dynarmic stubs below were proved in the Azahar and touchHLE cores.
 // SPDX-License-Identifier: MIT
 #include <cerrno>
 #include <cstring>
 #include <pthread.h>
 #include <signal.h>
 #include <sched.h>
-#include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
 extern "C" {
-
-int mkdir(const char*, mode_t)
-{
-  errno = EROFS;
-  return -1;
-}
-
-int rmdir(const char*)
-{
-  errno = EROFS;
-  return -1;
-}
-
-int unlink(const char*)
-{
-  errno = EROFS;
-  return -1;
-}
-
-int rename(const char*, const char*)
-{
-  errno = EROFS;
-  return -1;
-}
-
-int chmod(const char*, mode_t)
-{
-  errno = EROFS;
-  return -1;
-}
 
 // std::thread::hardware_concurrency goes through here; the box is one CPU
 // and saying so keeps every pool deterministic.
@@ -78,7 +46,7 @@ int pthread_getaffinity_np(pthread_t, size_t cpusetsize, cpu_set_t* mask)
 }
 
 // dynarmic installs a SIGSEGV handler for its "fastmem" when a JIT is made.
-// touchHLE never gives it a fastmem arena (it hands dynarmic a page table), so
+// Zeebx never gives it a fastmem arena (it hands Dynarmic a page table), so
 // the handler would never run - and a sandboxed guest has no signals to
 // install one for. Both calls succeed and change nothing.
 int sigaction(int, const struct sigaction*, struct sigaction* old)
