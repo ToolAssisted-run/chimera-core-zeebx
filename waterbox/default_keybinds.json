@@ -1,0 +1,65 @@
+{
+  "_comment": [
+    "The first controller on the keyboard and the first pad: the D-pad on the arrows, buttons 1 to 4 on X, C, Z and S",
+    "(1 is the bottom button, where an Xbox pad has A), the sticks on the pad's own. The second controller is left unbound."
+  ],
+  "AllTrollers": {
+    "Zeebo Controllers": {
+      "P1 Up": "Up, J1 POV1U, X1 DpadUp",
+      "P1 Down": "Down, J1 POV1D, X1 DpadDown",
+      "P1 Left": "Left, J1 POV1L, X1 DpadLeft",
+      "P1 Right": "Right, J1 POV1R, X1 DpadRight",
+      "P1 1": "X, J1 B2, X1 A",
+      "P1 2": "C, J1 B3, X1 B",
+      "P1 3": "Z, J1 B1, X1 X",
+      "P1 4": "S, J1 B4, X1 Y",
+      "P1 ZL": "Q, J1 B5, X1 LeftShoulder",
+      "P1 ZR": "W, J1 B6, X1 RightShoulder",
+      "P1 Start": "Enter, J1 B10, X1 Start",
+      "P1 Back": "Backspace, J1 B9, X1 Back",
+      "P1 Left Stick": "J1 B11, X1 LeftThumb",
+      "P1 Right Stick": "J1 B12, X1 RightThumb",
+      "P2 Up": "",
+      "P2 Down": "",
+      "P2 Left": "",
+      "P2 Right": "",
+      "P2 1": "",
+      "P2 2": "",
+      "P2 3": "",
+      "P2 4": "",
+      "P2 ZL": "",
+      "P2 ZR": "",
+      "P2 Start": "",
+      "P2 Back": "",
+      "P2 Left Stick": "",
+      "P2 Right Stick": ""
+    }
+  },
+  "AllTrollersAutoFire": {
+    "Zeebo Controllers": {}
+  },
+  "AllTrollersAnalog": {
+    "Zeebo Controllers": {
+      "P1 Left Stick X": {
+        "Value": "X1 LeftThumbX Axis",
+        "Mult": 1.0,
+        "Deadzone": 0.1
+      },
+      "P1 Left Stick Y": {
+        "Value": "X1 LeftThumbY Axis",
+        "Mult": -1.0,
+        "Deadzone": 0.1
+      },
+      "P1 Right Stick X": {
+        "Value": "X1 RightThumbX Axis",
+        "Mult": 1.0,
+        "Deadzone": 0.1
+      },
+      "P1 Right Stick Y": {
+        "Value": "X1 RightThumbY Axis",
+        "Mult": -1.0,
+        "Deadzone": 0.1
+      }
+    }
+  }
+}

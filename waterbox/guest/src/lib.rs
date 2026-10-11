@@ -174,6 +174,14 @@ fn c(text: &str) -> CString {
 #[allow(static_mut_refs)]
 pub fn start(host_name: &str, settings: &Settings) -> Result<(), String> {
     let base = host_name.rsplit(['/', '\\']).next().unwrap_or(host_name);
+    start_named(host_name, base, settings)
+}
+
+/// As [`start`], when the package is read under one name and is called
+/// another: `base` is the game's own file name, which says what kind of
+/// package it is.
+#[allow(static_mut_refs)]
+pub fn start_named(host_name: &str, base: &str, settings: &Settings) -> Result<(), String> {
     let lower = base.to_ascii_lowercase();
     if !(lower.ends_with(".7z") || lower.ends_with(".zip") || lower.ends_with(".mod")) {
         return Err(format!("{base} is not a .7z, .zip or .mod file: this core runs Zeebo games packaged that way"));
@@ -252,8 +260,15 @@ pub extern "C" fn Init() -> i32 {
             Err(e) => return fail(format!("no game: {e}")),
         },
     };
+    // The engine mounts the file under its own name, with or without the
+    // folder it came from, and under "rom" as well: the first that is there.
     let base = name.rsplit(['/', '\\']).next().unwrap_or(&name).to_string();
-    match start(&base, &settings) {
+    let mounted = [base.as_str(), name.as_str(), "rom"]
+        .into_iter()
+        .find(|candidate| Path::new(candidate).is_file())
+        .unwrap_or(base.as_str())
+        .to_string();
+    match start_named(&mounted, &base, &settings) {
         Ok(()) => 1,
         Err(e) => fail(e),
     }
@@ -442,5 +457,21 @@ pub extern "C" fn GetSaveDataFileBuffer(index: i32) -> *const u8 {
 // The game's memory is not offered to RAM tools yet.
 #[no_mangle]
 pub extern "C" fn GetMemoryDomainCount() -> i32 {
+    0
+}
+#[no_mangle]
+pub extern "C" fn GetMemoryDomainName(_index: i32) -> *const u8 {
+    b"\0".as_ptr()
+}
+#[no_mangle]
+pub extern "C" fn GetMemoryDomainPtr(_index: i32) -> *mut u8 {
+    std::ptr::null_mut()
+}
+#[no_mangle]
+pub extern "C" fn GetMemoryDomainSize(_index: i32) -> u64 {
+    0
+}
+#[no_mangle]
+pub extern "C" fn GetMemoryDomainWritable(_index: i32) -> i32 {
     0
 }

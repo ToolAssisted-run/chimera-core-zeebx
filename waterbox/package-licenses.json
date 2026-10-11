@@ -1,0 +1,40 @@
+{
+  "package": "zeebx",
+  "effectiveTerms": "GPL-3.0-or-later",
+  "commercialUse": "allowed under the GPL",
+  "note": "The core is the Zeebx emulator (GPL-2.0-or-later) built with this repository's patches (GPL-2.0-or-later) and integration (MIT). As Zeebx's own binaries are, the built core is under the GPL version 3, because it links Apache-2.0 libraries. Compiled in: Dynarmic (0BSD) with fmt, mcl, robin-map, Zydis and Zycore (MIT), xbyak (BSD-3-Clause) and header-only Boost (BSL-1.0); SQLite (public domain); and Zeebx's Rust dependencies. Zeebx's THIRD-PARTY-NOTICES.txt, carried in this package, names every one of them with its licence text; it was written for Zeebx's desktop program and so also lists libraries that this core does not link (the window, the sound card, the network). The package contains no game and nothing of the console's own software.",
+  "components": [
+    {
+      "name": "chimera-core-zeebx (integration)",
+      "license": "MIT, and GPL-2.0-or-later for patches/",
+      "url": "https://github.com/ToolAssisted-run/chimera-core-zeebx",
+      "commit": "{selfCommit}",
+      "file": "LICENSE",
+      "sourceUrl": "https://github.com/ToolAssisted-run/chimera-core-zeebx/archive/{commit}.tar.gz"
+    },
+    {
+      "name": "Zeebx",
+      "license": "GPL-2.0-or-later",
+      "url": "https://github.com/ZeebxTeam/zeebx-emu",
+      "commit": "{submodule:extern/zeebx}",
+      "file": "extern/zeebx/LICENSE",
+      "sourceUrl": "https://github.com/ZeebxTeam/zeebx-emu/archive/{commit}.tar.gz"
+    },
+    {
+      "name": "GNU General Public License version 3 (the terms of the built core)",
+      "license": "GPL-3.0-or-later",
+      "url": "https://github.com/ZeebxTeam/zeebx-emu",
+      "commit": "{submodule:extern/zeebx}",
+      "file": "extern/zeebx/LICENSE-GPL3",
+      "sourceUrl": "https://github.com/ZeebxTeam/zeebx-emu/archive/{commit}.tar.gz"
+    },
+    {
+      "name": "Dynarmic, SQLite and Zeebx's Rust dependencies (Zeebx's own list)",
+      "license": "0BSD, MIT, Apache-2.0, BSD-3-Clause, BSL-1.0, Zlib, ISC, Unicode-3.0, public domain and others, each named in the file",
+      "url": "https://github.com/ZeebxTeam/zeebx-emu",
+      "commit": "{submodule:extern/zeebx}",
+      "file": "extern/zeebx/THIRD-PARTY-NOTICES.txt",
+      "sourceUrl": "https://github.com/ZeebxTeam/zeebx-emu/archive/{commit}.tar.gz"
+    }
+  ]
+}

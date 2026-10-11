@@ -74,7 +74,8 @@ for e in Init GetLoadError SetAxis FrameAdvance IsRunning GetFrameCount GetMachi
 	GetExecutedTicks GetVideoBgra GetVideoWidth GetVideoHeight GetVsyncNumerator \
 	GetVsyncDenominator GetAudio GetAudioSampleCount IsButtonActive IsAxisActive \
 	GetSaveDataFileCount GetSaveDataFileName GetSaveDataFileSize GetSaveDataFileBuffer \
-	GetMemoryDomainCount; do
+	GetMemoryDomainCount GetMemoryDomainName GetMemoryDomainPtr GetMemoryDomainSize \
+	GetMemoryDomainWritable; do
 	exports="$exports -Wl,-u,$e"
 done
 

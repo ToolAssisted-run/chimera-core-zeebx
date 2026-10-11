@@ -10,9 +10,10 @@ Where it stands (2026-10-11): both of the owner's test games run in
 Chimera's sandbox a frame at a time and give exactly what the native build
 gives - the same clock, instruction count, picture and sound at every checked
 frame - including with a savestate saved and loaded before every frame, and
-with a savestate carried into another process. There is no package for
-Chimera yet (no controller, settings or file declarations), no test script,
-and nothing is published.
+with a savestate carried into another process. As a package
+(`zeebx.chimeraCore`) both games run in Chimera's headless runner on Linux
+and on Windows, with the same pictures. There is no test script yet,
+Chimera's window has not been tried, and nothing is published.
 
 ## The version it builds
 
@@ -154,6 +155,38 @@ time goes has not been measured yet.
 Building `core.wbx` turned up one more thing: the `dynarmic` crate tells
 cargo to find Dynarmic's libraries at link time, so they are not inside the
 core's static library and `build-guest.sh` names them in the link.
+
+## The package (2026-10-11)
+
+`waterbox/build-package.sh -r <chimera checkout>` builds
+`zeebx.chimeraCore`: the core, what it declares (`waterbox.config`,
+`file_slots.json`, `default_keybinds.json`) and the licence texts.
+
+- System id `ZEEBO`, named "Zeebo". A project is one game: a `.7z`, a
+  `.zip` or a `.mod`.
+- Two settings: Controllers (1 or 2) and Clock at Power-On.
+- The built core is under the GPL version 3, as Zeebx's own binaries are.
+  The package carries Zeebx's licence, the GPL 3 text and Zeebx's own list
+  of third-party notices, which names Dynarmic, SQLite and every Rust
+  library with its licence. That list was written for Zeebx's desktop
+  program, so it also names libraries this core does not link.
+- No memory is offered to RAM tools yet: the functions are there and say
+  there are no domains.
+
+What was measured:
+
+- Chimera's package checks (`InstalledCorePackagesTests`,
+  `MnemonicUniquenessTests`): 17 of 17.
+- `chimera-run` on Linux: 279036 for 600 frames, recording a movie (one
+  controller's columns: 4 axes and 14 buttons). Its picture at frame 599 is
+  the picture `run-wbx` gives at frame 599.
+- `chimera-run.exe` on Windows: 279036 for 600 frames and Quake II for 900.
+  The pictures at frames 599 and 899 are the ones Linux gives.
+
+Two things the first runs in `chimera-run` turned up: the engine mounts the
+game under a name the core has to look for (its own name, the full path, or
+"rom"), and it requires all five memory-domain functions even when there
+are no domains.
 
 ## What is the owner's
 
