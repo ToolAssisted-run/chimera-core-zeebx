@@ -4,7 +4,7 @@
  * the two outputs can be compared directly.
  *
  *   run-wbx <core.wbx> <game> [run-native's options] [--rerecord]
- *           [--save-state FILE --at FRAME] [--state FILE]
+ *           [--save-state FILE --at FRAME] [--state FILE] [--savedata ZIP]
  *
  * The game is mounted under its own name without being read, with "rom.name"
  * saying which and "settings" beside it, as the engine mounts them.
@@ -12,6 +12,7 @@
  *   --rerecord            save the whole machine and load it again before
  *                         every frame; the lines must not change
  *   --save-state F --at N save the machine to F after frame N
+ *   --shot N=FILE         write the picture as it is after frame N (repeatable)
  *   --state F             load the machine from F before the first frame
  *                         (made by another process with the same options),
  *                         and count frames from where it was saved
@@ -113,6 +114,21 @@ static void load(const uint8_t *b, size_t len)
 }
 
 struct press { long from, count; uint64_t mask; };
+struct shot { long frame; const char *path; };
+
+static int write_ppm(const char *path, const uint32_t *video)
+{
+	FILE *o = fopen(path, "wb");
+	if (!o)
+		return 0;
+	fprintf(o, "P6\n%d %d\n255\n", WIDTH, HEIGHT);
+	for (int i = 0; i < WIDTH * HEIGHT; i++) {
+		const uint8_t rgb[3] = { (uint8_t)(video[i] >> 16), (uint8_t)(video[i] >> 8), (uint8_t)video[i] };
+		fwrite(rgb, 1, 3, o);
+	}
+	fclose(o);
+	return 1;
+}
 
 int main(int argc, char **argv)
 {
@@ -122,9 +138,11 @@ int main(int argc, char **argv)
 		return 2;
 	}
 	long frames = 600, every = 60, at = 0;
-	const char *ppm = NULL, *save_state = NULL, *state = NULL;
+	const char *ppm = NULL, *save_state = NULL, *state = NULL, *savedata = NULL;
 	int rerecord = 0, npress = 0;
 	struct press presses[64];
+	struct shot shots[16];
+	int nshot = 0;
 	char settings[512] = "{";
 	size_t sl = 1;
 	for (int i = 3; i < argc; i++) {
@@ -144,6 +162,16 @@ int main(int argc, char **argv)
 		else if (!strcmp(a, "--save-state")) save_state = v;
 		else if (!strcmp(a, "--at")) at = atol(v);
 		else if (!strcmp(a, "--state")) state = v;
+		else if (!strcmp(a, "--savedata")) savedata = v;
+		else if (!strcmp(a, "--shot")) {
+			char *eq = strchr(v, '=');
+			if (!eq || nshot == 16) {
+				fprintf(stderr, "--shot FRAME=FILE\n");
+				return 2;
+			}
+			shots[nshot].frame = atol(v);
+			shots[nshot++].path = eq + 1;
+		}
 		else if (!strcmp(a, "--pads")) sl += (size_t)snprintf(settings + sl, sizeof settings - sl, "\"pads\":\"%s\",", v);
 		else if (!strcmp(a, "--rtc")) sl += (size_t)snprintf(settings + sl, sizeof settings - sl, "\"rtc_start\":\"%s\",", v);
 		else if (!strcmp(a, "--press")) {
@@ -185,6 +213,17 @@ int main(int argc, char **argv)
 	wbx_mount_file_path(g_host, base, argv[2], &r);
 	must(&r, argv[2]);
 	mount_text("rom.name", base);
+	if (savedata) {
+		/* as a project mounts it: the zip under its own name, named in the
+		 * "savedata" slot of the list of the project's files */
+		const char *sbase = strrchr(savedata, '/');
+		sbase = sbase ? sbase + 1 : savedata;
+		wbx_mount_file_path(g_host, sbase, savedata, &r);
+		must(&r, savedata);
+		static char slots[1024];
+		snprintf(slots, sizeof slots, "{\"game\":[\"%s\"],\"savedata\":[\"%s\"]}", base, sbase);
+		mount_text("slots", slots);
+	}
 	mount_text("settings", settings);
 	wbx_activate_host(g_host, &r);
 	must(&r, "activate");
@@ -271,6 +310,9 @@ int main(int argc, char **argv)
 			       (unsigned long long)pairs, (unsigned long long)sound, WIDTH, HEIGHT,
 			       (unsigned long long)fnv(FNV_START, (const uint8_t *)GetVideoBgra(), WIDTH * HEIGHT * 4));
 		}
+		for (int k = 0; k < nshot; k++)
+			if (shots[k].frame == frame && !write_ppm(shots[k].path, GetVideoBgra()))
+				return 2;
 		if (!running) {
 			printf("stopped at frame %ld\n", frame);
 			break;
@@ -322,18 +364,21 @@ int main(int argc, char **argv)
 		}
 		printf("bus ranges=%d bytes=%llu hash=%016llx (%s)\n", n, (unsigned long long)bytes, (unsigned long long)digest, poke);
 	}
-	if (ppm) {
-		const uint32_t *video = GetVideoBgra();
-		FILE *o = fopen(ppm, "wb");
-		if (!o)
-			return 2;
-		fprintf(o, "P6\n%d %d\n255\n", WIDTH, HEIGHT);
-		for (int i = 0; i < WIDTH * HEIGHT; i++) {
-			const uint8_t rgb[3] = { (uint8_t)(video[i] >> 16), (uint8_t)(video[i] >> 8), (uint8_t)video[i] };
-			fwrite(rgb, 1, 3, o);
+	/* what the console keeps: run-native's lines */
+	{
+		int (*Count)(void) = (int (*)(void))proc("GetSaveDataFileCount");
+		const char *(*Name)(int) = (const char *(*)(int))proc("GetSaveDataFileName");
+		uint64_t (*Size)(int) = (uint64_t (*)(int))proc("GetSaveDataFileSize");
+		const uint8_t *(*Buffer)(int) = (const uint8_t *(*)(int))proc("GetSaveDataFileBuffer");
+		const int n = Count();
+		for (int i = 0; i < n; i++) {
+			const uint64_t size = Size(i);
+			printf("save %s %llu %016llx\n", Name(i), (unsigned long long)size,
+			       (unsigned long long)fnv(FNV_START, Buffer(i), (size_t)size));
 		}
-		fclose(o);
 	}
+	if (ppm && !write_ppm(ppm, GetVideoBgra()))
+		return 2;
 	fflush(stdout);
 	return 0;
 }

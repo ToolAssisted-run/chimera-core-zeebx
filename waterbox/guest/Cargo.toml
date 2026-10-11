@@ -20,6 +20,8 @@ crate-type = ["staticlib", "rlib"]
 zeebx = { path = "../../extern/zeebx", default-features = false }
 # the settings and the project's list of files are JSON
 serde_json = "1"
+# save data comes in as the .zip Chimera's Export Save Data writes
+zip = { version = "2", default-features = false, features = ["deflate"] }
 # the C library's maths, the same in both builds (src/mathlib.rs)
 libm = "=0.2.16"
 

@@ -178,8 +178,9 @@ What was measured:
 - Chimera's package checks (`InstalledCorePackagesTests`,
   `MnemonicUniquenessTests`): 17 of 17.
 - `chimera-run` on Linux: 279036 for 600 frames, recording a movie (one
-  controller's columns: 4 axes and 14 buttons). Its picture at frame 599 is
-  the picture `run-wbx` gives at frame 599.
+  controller's columns: 4 axes and 14 buttons). Its picture matched
+  `run-wbx`'s - but on a still screen, which proved less than it seemed:
+  see "A test that passed on a still picture" below.
 - `chimera-run.exe` on Windows: 279036 for 600 frames and Quake II for 900.
   The pictures at frames 599 and 899 are the ones Linux gives.
 
@@ -273,6 +274,46 @@ the sandbox. In the level the sandbox runs at about real time on this
 computer (20 threads, of which the sandbox uses one). The native build draws
 the 3D picture on as many threads as the host has; the sandbox draws it on
 one.
+
+## Save data, out and in (2026-10-11)
+
+What a game saves lives in the console's saves folder in memory, under a
+folder named after the game's package. Um Jogo de Ovos writes a log there;
+Quake II writes a copy of one of its own files and, once in a level, its
+automatic save (`udata/save/current/game.ssv` and `server.ssv`).
+
+- **Out**: Chimera's Export Save Data gets every file under that folder,
+  named by its path.
+- **In**: a project can hold a "Save data" file, the `.zip` that export
+  writes. Its files are put back in the saves folder before the game
+  starts. A name that would leave the folder is refused.
+
+The test `frontend:savedata` exports what Quake II saved in its level
+through `chimera-run`, changes one byte of one file, zips the result, and
+starts a new run from it: at its first frame that file is there with the
+changed byte, and without the save data it is not there at all. Whether the
+game then offers the save in its Load Game menu has not been looked at.
+
+## A test that passed on a still picture (2026-10-11)
+
+`frontend:picture` first compared `chimera-run --screenshot 599` with
+`run-wbx --frames 599` on Um Jogo de Ovos, and passed. It was wrong twice
+over, and each error hid the other: `chimera-run` numbers its screenshots
+from 0, so number 599 is the picture after 600 frames; and the game's menu
+was standing still at that point, so frames 599 and 600 were the same
+picture. It came out when a movie into Quake II's level was compared the
+same way and 18,331 pixels differed.
+
+The test now plays a movie into the level, compares screenshot N with the
+picture after N+1 frames, and also requires that picture to differ from the
+one two frames earlier (the game draws a new picture every second frame).
+A still picture can no longer pass for a match.
+
+The same day `state:other-process` was found comparing only the last line
+of each run, which had become a line about saved files and would have been
+the same for a run that had gone wrong. It now compares everything from the
+last frame's line on. Seen to fail: a state saved after frame 449 and
+labelled 450 ends 17 ms behind with other sound.
 
 ## What is the owner's
 

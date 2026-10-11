@@ -1,5 +1,5 @@
 {
-  "_comment": "This file lists the kinds of file a Zeebo project can hold. Chimera's New Project window is built from it. A project is one game. Zeebx needs nothing else: it stands in for the console's system software.",
+  "_comment": "This file lists the kinds of file a Zeebo project can hold. Chimera's New Project window is built from it. A project is one game, and optionally what the game already saved. Zeebx needs nothing else: it stands in for the console's system software.",
   "slots": [
     {
       "id": "game",
@@ -12,6 +12,16 @@
         "mod"
       ],
       "help": "The game as it was dumped from a console: a .7z or .zip archive with a 'mif' folder and a 'mod' folder in it, or the game's .mod file. Zeebx's compatibility list (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) says which games work."
+    },
+    {
+      "id": "savedata",
+      "title": "Save data",
+      "min": 0,
+      "max": 1,
+      "formats": [
+        "zip"
+      ],
+      "help": "What the game already saved, as Emulator > Export Save Data... wrote it. It is a .zip of the console's saves folder, and it is put back before the game starts."
     }
   ]
 }

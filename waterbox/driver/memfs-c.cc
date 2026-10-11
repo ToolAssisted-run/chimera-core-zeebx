@@ -29,6 +29,16 @@ int chimera_memfs_graft(const char* path, const char* host_name) {
   return chimera::memfs::graft(path, host_name) ? 1 : 0;
 }
 
+// A writable file with these contents, its folders made as needed.
+int chimera_memfs_put(const char* path, const uint8_t* data, size_t size) {
+  const std::string p(path);
+  const size_t slash = p.rfind('/');
+  if (slash != std::string::npos && slash > 0 && !chimera::memfs::mkdirs(p.substr(0, slash))) {
+    return 0;
+  }
+  return chimera::memfs::put(p, std::vector<uint8_t>(data, data + size)) ? 1 : 0;
+}
+
 // Every regular file under a folder, in name order. The count; then each
 // name by index until the next call.
 int chimera_memfs_list(const char* dir) {

@@ -1,5 +1,5 @@
 //! run-native <game> [--frames N] [--every N] [--press F:N:MASK]... [--pads N]
-//!            [--rtc SECONDS] [--ppm FILE]
+//!            [--rtc SECONDS] [--ppm FILE] [--savedata ZIP]
 //!
 //! Runs a game on the core built for the host, calling the same functions in
 //! the same order as Chimera's engine does. Every so many frames it prints one
@@ -10,6 +10,8 @@
 //!   --press F:N:MASK   hold the buttons in MASK (hexadecimal, one bit a
 //!                      button in the order the package declares them) for N
 //!                      frames starting at frame F
+//!   --savedata ZIP     start with what a game saved before: the zip Chimera's
+//!                      Export Save Data writes
 use zeebx_guest as core;
 
 /// FNV-1a: small, and the same everywhere.
@@ -32,6 +34,7 @@ fn main() {
     let mut every = 60u64;
     let mut ppm: Option<String> = None;
     let mut presses: Vec<(u64, u64, u64)> = Vec::new();
+    let mut save_data: Vec<(String, Vec<u8>)> = Vec::new();
     let mut settings = String::from("{");
     let mut i = 2;
     while i + 1 < args.len() {
@@ -40,6 +43,10 @@ fn main() {
             "--frames" => frames = value.parse().expect("--frames N"),
             "--every" => every = value.parse().expect("--every N"),
             "--ppm" => ppm = Some(value.clone()),
+            "--savedata" => {
+                let bytes = std::fs::read(value).expect("--savedata ZIP");
+                save_data = core::read_save_zip(&bytes).expect("the save data");
+            }
             "--pads" => settings.push_str(&format!("\"pads\":\"{value}\",")),
             "--rtc" => settings.push_str(&format!("\"rtc_start\":\"{value}\",")),
             "--press" => {
@@ -66,7 +73,7 @@ fn main() {
         eprintln!("run-native: {e}");
         std::process::exit(2);
     });
-    if let Err(e) = core::start(&args[1], &settings) {
+    if let Err(e) = core::start(&args[1], &settings, save_data) {
         eprintln!("run-native: {e}");
         std::process::exit(1);
     }
@@ -131,6 +138,15 @@ fn main() {
             core::PokeBus(0, base as i32, before);
         }
         println!("bus ranges={count} bytes={bytes} hash={digest:016x} ({poke})");
+    }
+    // what the console keeps: each file a game wrote, with its size and a digest
+    unsafe {
+        for i in 0..core::GetSaveDataFileCount() {
+            let name = std::ffi::CStr::from_ptr(core::GetSaveDataFileName(i) as *const std::ffi::c_char).to_string_lossy();
+            let size = core::GetSaveDataFileSize(i) as usize;
+            let bytes = std::slice::from_raw_parts(core::GetSaveDataFileBuffer(i), size);
+            println!("save {name} {size} {:016x}", fnv(FNV_START, bytes));
+        }
     }
     eprintln!("run-native: {:.1} s of host time", started.elapsed().as_secs_f64());
     if let Some(path) = ppm {

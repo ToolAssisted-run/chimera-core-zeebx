@@ -1286,6 +1286,7 @@ dependencies = [
  "libm",
  "serde_json",
  "zeebx",
+ "zip",
 ]
 
 [[package]]

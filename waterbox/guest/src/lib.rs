@@ -26,6 +26,7 @@ extern "C" {
     fn chimera_memfs_set_time(seconds: i64);
     fn chimera_memfs_mkdirs(path: *const c_char) -> i32;
     fn chimera_memfs_graft(path: *const c_char, host_name: *const c_char) -> i32;
+    fn chimera_memfs_put(path: *const c_char, data: *const u8, size: usize) -> i32;
     fn chimera_memfs_list(dir: *const c_char) -> i32;
     fn chimera_memfs_list_name(index: i32) -> *const c_char;
     fn chimera_memfs_get(path: *const c_char) -> i64;
@@ -164,6 +165,32 @@ impl Settings {
     }
 }
 
+// ---- Save data in ----------------------------------------------------------------
+
+/// The files of a save-data zip (what Chimera's Export Save Data writes):
+/// paths under the console's saves folder, as GetSaveDataFileName names them.
+pub fn read_save_zip(bytes: &[u8]) -> Result<Vec<(String, Vec<u8>)>, String> {
+    use std::io::Read;
+    let mut zip = zip::ZipArchive::new(std::io::Cursor::new(bytes)).map_err(|e| format!("not a zip: {e}"))?;
+    let mut out = Vec::new();
+    for i in 0..zip.len() {
+        let mut f = zip.by_index(i).map_err(|e| e.to_string())?;
+        if f.is_dir() {
+            continue;
+        }
+        let name = f.name().replace('\\', "/");
+        // a name that would leave the saves folder is not a save
+        if name.starts_with('/') || name.split('/').any(|part| part == ".." || part.is_empty()) {
+            return Err(format!("{name}: not a path inside the saves folder"));
+        }
+        let mut data = Vec::new();
+        f.read_to_end(&mut data).map_err(|e| format!("{name}: {e}"))?;
+        out.push((name, data));
+    }
+    out.sort_by(|a, b| a.0.cmp(&b.0));
+    Ok(out)
+}
+
 // ---- Starting --------------------------------------------------------------------
 
 fn c(text: &str) -> CString {
@@ -174,16 +201,21 @@ fn c(text: &str) -> CString {
 /// package is read from: a path natively, a mounted file's name in the
 /// sandbox. Nothing of the game runs until the first frame.
 #[allow(static_mut_refs)]
-pub fn start(host_name: &str, settings: &Settings) -> Result<(), String> {
+pub fn start(host_name: &str, settings: &Settings, save_data: Vec<(String, Vec<u8>)>) -> Result<(), String> {
     let base = host_name.rsplit(['/', '\\']).next().unwrap_or(host_name);
-    start_named(host_name, base, settings)
+    start_named(host_name, base, settings, save_data)
 }
 
 /// As [`start`], when the package is read under one name and is called
 /// another: `base` is the game's own file name, which says what kind of
 /// package it is.
 #[allow(static_mut_refs)]
-pub fn start_named(host_name: &str, base: &str, settings: &Settings) -> Result<(), String> {
+pub fn start_named(
+    host_name: &str,
+    base: &str,
+    settings: &Settings,
+    save_data: Vec<(String, Vec<u8>)>,
+) -> Result<(), String> {
     let lower = base.to_ascii_lowercase();
     if !(lower.ends_with(".7z") || lower.ends_with(".zip") || lower.ends_with(".mod")) {
         return Err(format!("{base} is not a .7z, .zip or .mod file: this core runs Zeebo games packaged that way"));
@@ -197,6 +229,14 @@ pub fn start_named(host_name: &str, base: &str, settings: &Settings) -> Result<(
         }
         if chimera_memfs_graft(c(&inside).as_ptr(), c(host_name).as_ptr()) == 0 {
             return Err(format!("{host_name} could not be opened"));
+        }
+    }
+    // what was saved before goes back where the console keeps it, before
+    // the game starts
+    for (name, bytes) in &save_data {
+        let path = format!("{STORAGE_ROOT}/saves/{name}");
+        if unsafe { chimera_memfs_put(c(&path).as_ptr(), bytes.as_ptr(), bytes.len()) } == 0 {
+            return Err(format!("the save data: {name} could not be put back"));
         }
     }
     zeebx::machine::FIXED_START_UNIX_SECONDS.store(settings.rtc_start, std::sync::atomic::Ordering::Relaxed);
@@ -270,7 +310,18 @@ pub extern "C" fn Init() -> i32 {
         .find(|candidate| Path::new(candidate).is_file())
         .unwrap_or(base.as_str())
         .to_string();
-    match start_named(&mounted, &base, &settings) {
+    // What the console kept before: the .zip Export Save Data writes.
+    let save_data = match slot_first("savedata") {
+        None => Vec::new(),
+        Some(zip_name) => {
+            let zip_base = zip_name.rsplit(['/', '\\']).next().unwrap_or(&zip_name).to_string();
+            match read_mount(&zip_base).and_then(|b| read_save_zip(&b)) {
+                Ok(files) => files,
+                Err(e) => return fail(format!("the save data {zip_base}: {e}")),
+            }
+        }
+    };
+    match start_named(&mounted, &base, &settings, save_data) {
         Ok(()) => 1,
         Err(e) => fail(e),
     }

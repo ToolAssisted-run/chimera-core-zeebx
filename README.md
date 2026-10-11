@@ -18,8 +18,8 @@ first level.
 - The same input gives the same run every time.
 - Quake II's level runs at about real time on a fast computer: the 3D
   picture is drawn in software on one processor thread.
-- What a game saves can be exported from Chimera, but a save cannot be put
-  in before the game starts yet.
+- What a game saves can be exported from Chimera, and put back into a new
+  project as its "Save data" file.
 
 ## What you bring
 

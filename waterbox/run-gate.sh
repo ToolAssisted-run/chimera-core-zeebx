@@ -24,8 +24,8 @@ report() { # <test> <PASS|FAIL|SKIP> <what>
 	printf '%-22s %-6s %s\n' "$1" "$2" "$3"
 	case "$2" in PASS) ok=$((ok + 1)) ;; FAIL) failed=$((failed + 1)) ;; *) skipped=$((skipped + 1)) ;; esac
 }
-# what a run ended with
-last() { tail -1 "$1" 2> /dev/null | cut -c1-110; }
+# what a run ended with: its last frame's line
+last() { grep '^frame=' "$1" 2> /dev/null | tail -1 | cut -c1-110; }
 sandbox() { "$wbx/run-wbx" "$wbx/core.wbx" "$@"; }
 
 game="${ZEEBX_TEST_GAME:-$root/tests/roms/279036.7z}"
@@ -131,17 +131,26 @@ else
 	fi
 	sandbox "$game" --frames "$half" --every 60 $press --save-state "$work/half.state" --at "$half" > "$work/s1.out" 2> "$work/s1.err"
 	sandbox "$game" --frames "$frames" --every 60 $press --state "$work/half.state" > "$work/s2.out" 2> "$work/s2.err"
-	if [ -s "$work/s2.out" ] && [ "$(tail -1 "$work/s2.out")" = "$(tail -1 "$work/p.out")" ]; then
+	# everything from the last frame's line on: the clock, the instructions,
+	# the picture and the sound, then all of the game's memory and its saves
+	ending() { sed -n "/^frame=$frames /,\$p" "$1"; }
+	if [ -n "$(ending "$work/s2.out")" ] && [ "$(ending "$work/s2.out")" = "$(ending "$work/p.out")" ]; then
 		report "state:other-process" PASS "saved after frame $half ($(wc -c < "$work/half.state") bytes), loaded by another process, it ends on the unbroken run's line"
 	else
-		report "state:other-process" FAIL "unbroken [$(last "$work/p.out")] carried over [$(last "$work/s2.out")] $(tail -1 "$work/s2.err")"
+		report "state:other-process" FAIL "unbroken [$(ending "$work/p.out" | head -1 | cut -c1-110)] carried over [$(ending "$work/s2.out" | head -1 | cut -c1-110)] $(tail -1 "$work/s2.err")"
 	fi
 fi
 
 # The package in Chimera's headless runner (chimera-run), from a checkout
 # named by CHIMERA_ROOT that has the package installed by
 # waterbox/build-package.sh -r <it>:
-#  - a movie recorded there shows, at a frame, the picture run-wbx shows;
+#  - a movie that plays the 3D game into its first level shows, at a frame
+#    there, the picture run-wbx shows after the same number of frames - and
+#    not the picture of two frames earlier, so that a still picture cannot
+#    pass for a match (the game draws a new picture every second frame);
+#  - what the game saved there comes out through the engine's save data
+#    export, and put back in (the "savedata" file of a project) it is what a
+#    new run starts with;
 #  - a movie has columns for the controllers that are plugged in and no
 #    others (a row is "||" and then one group ending in "|" a controller).
 chimera_root="${CHIMERA_ROOT:-}"
@@ -150,23 +159,83 @@ package="$chimera_root/build/Cores/zeebx.chimeraCore"
 if [ -z "$chimera_root" ] || [ ! -x "$engine" ] || [ ! -f "$package" ]; then
 	why="set CHIMERA_ROOT to a Chimera checkout with build/meson-linux/chimera-run and the package (waterbox/build-package.sh -r <it>)"
 	report "frontend:picture" SKIP "$why"
+	report "frontend:savedata" SKIP "$why"
 	report "frontend:pads" SKIP "$why"
 elif [ "$have_sandbox" = 0 ]; then
 	report "frontend:picture" SKIP "$why_sandbox"
+	report "frontend:savedata" SKIP "$why_sandbox"
 	report "frontend:pads" SKIP "$why_sandbox"
 else
-	fe_frames=600
-	shot=$((fe_frames - 1))
 	: > "$work/empty.movie"
-	env -u DISPLAY "$engine" "$package" "$game" "$work/empty.movie" --frames "$fe_frames" --record "$work/fe.movie" --screenshot "$shot=$work/fe.tga" > "$work/fe.out" 2>&1
-	ran=$?
-	sandbox "$game" --frames "$shot" --every "$shot" --ppm "$work/fe.ppm" > /dev/null 2>&1
-	verdict="$(python3 "$here/tests/same-picture.py" "$work/fe.tga" "$work/fe.ppm" 2>&1)"
-	same_rc=$?
-	if [ "$ran" = 0 ] && grep -q "^frames=$fe_frames" "$work/fe.out" && [ "$same_rc" = 0 ]; then
-		report "frontend:picture" PASS "$fe_frames frames in chimera-run: its picture at frame $shot is run-wbx's ($verdict)"
+	if [ ! -f "$game3d" ]; then
+		report "frontend:picture" SKIP "needs tests/roms/276153.7z, or ZEEBX_TEST_GAME_3D=<a 3D game>"
+		report "frontend:savedata" SKIP "needs tests/roms/276153.7z, or ZEEBX_TEST_GAME_3D=<a 3D game>"
 	else
-		report "frontend:picture" FAIL "chimera-run exit $ran [$(tail -1 "$work/fe.out")]; the pictures: $verdict"
+		# the movie: button 1 (the fifth of a controller's 14) for six frames,
+		# three times, as game:3d's script has it; a row is a frame
+		fe_frames=2400
+		python3 - "$work/level.movie" "$fe_frames" <<'PYMOVIE'
+import sys
+rows = []
+for frame in range(1, int(sys.argv[2]) + 1):
+    buttons = list("." * 14)
+    if any(start <= frame < start + 6 for start in (950, 1150, 1350)):
+        buttons[4] = "1"
+    rows.append("||    0,    0,    0,    0,%s|" % "".join(buttons))
+open(sys.argv[1], "w").write("\n".join(rows) + "\n")
+PYMOVIE
+		# chimera-run counts its screenshots from 0: number N is the picture
+		# after N+1 frames
+		env -u DISPLAY "$engine" "$package" "$game3d" "$work/level.movie" --screenshot "$((fe_frames - 1))=$work/fe.tga" \
+			--export-savedata "$work/fe-saved" > "$work/fe.out" 2>&1
+		ran=$?
+		sandbox "$game3d" --frames "$fe_frames" --every "$fe_frames" --press 950:6:10 --press 1150:6:10 --press 1350:6:10 \
+			--shot "$((fe_frames - 2))=$work/fe-before.ppm" --ppm "$work/fe.ppm" > "$work/fe-wbx.out" 2>&1
+		verdict="$(python3 "$here/tests/same-picture.py" "$work/fe.tga" "$work/fe.ppm" 2>&1)"
+		same_rc=$?
+		earlier="$(python3 "$here/tests/same-picture.py" "$work/fe.tga" "$work/fe-before.ppm" 2>&1)"
+		earlier_rc=$?
+		if [ "$ran" = 0 ] && grep -q "^frames=$fe_frames" "$work/fe.out" && [ "$same_rc" = 0 ] && [ "$earlier_rc" = 1 ]; then
+			report "frontend:picture" PASS "a movie of $fe_frames frames into the level in chimera-run: its last picture is run-wbx's ($verdict), and not the one two frames earlier ($earlier)"
+		else
+			report "frontend:picture" FAIL "chimera-run exit $ran [$(tail -1 "$work/fe.out")]; against run-wbx: $verdict; against two frames earlier: $earlier"
+		fi
+		# Save data out and in. What the engine exported is zipped as
+		# Chimera's Export Save Data zips it (the names as the core gives
+		# them) with one byte of the game's settings file changed, and a new
+		# run is started from it: at its first frame the changed file is
+		# there, byte for byte. Without the save data it is not.
+		kept="$(find "$work/fe-saved" -type f 2> /dev/null | wc -l)"
+		python3 - "$work/fe-saved" "$work/fe-saved.zip" <<'PYZIP'
+import os, sys, zipfile
+root, out = sys.argv[1], sys.argv[2]
+names = sorted(os.path.relpath(os.path.join(d, f), root) for d, _, fs in os.walk(root) for f in fs)
+with zipfile.ZipFile(out, "w", zipfile.ZIP_STORED) as z:
+    for name in names:
+        data = bytearray(open(os.path.join(root, name), "rb").read())
+        if name.endswith("game.ssv") and data:
+            data[-1] ^= 0xFF  # the mark that says "this came from the zip"
+        z.writestr(name.replace(os.sep, "/"), bytes(data))
+PYZIP
+		sandbox "$game3d" --frames 1 --every 1 --savedata "$work/fe-saved.zip" > "$work/sd-in.out" 2> "$work/sd-in.err"
+		sandbox "$game3d" --frames 1 --every 1 > "$work/sd-none.out" 2> "$work/sd-none.err"
+		marked="$(python3 - "$work/fe-saved.zip" <<'PYMARK'
+import sys, zipfile
+z = zipfile.ZipFile(sys.argv[1])
+h = 0xcbf29ce484222325
+for name in z.namelist():
+    if name.endswith("game.ssv"):
+        for b in z.read(name):
+            h = ((h ^ b) * 0x100000001b3) & 0xFFFFFFFFFFFFFFFF
+        print("%s %d %016x" % (name, len(z.read(name)), h))
+PYMARK
+)"
+		if [ "$kept" -gt 0 ] && grep -q "^savedata=$kept" "$work/fe.out" && [ -n "$marked" ] &&
+			grep -qF "save $marked" "$work/sd-in.out" && ! grep -q "game.ssv" "$work/sd-none.out"; then
+			report "frontend:savedata" PASS "the engine's export brings out $kept files the game saved; put back in, with one byte of one file changed, a new run starts with exactly that file"
+		else
+			report "frontend:savedata" FAIL "$kept files exported [$(grep '^savedata=' "$work/fe.out")]; expected [save $marked]; the run with save data: [$(grep 'game.ssv' "$work/sd-in.out")] $(tail -1 "$work/sd-in.err"); without: [$(grep 'game.ssv' "$work/sd-none.out")]"
+		fi
 	fi
 	bars() { # <how many controllers>: the bars in a recorded row
 		env -u DISPLAY "$engine" "$package" "$game" "$work/empty.movie" --frames 3 --record "$work/pads$1.movie" \
