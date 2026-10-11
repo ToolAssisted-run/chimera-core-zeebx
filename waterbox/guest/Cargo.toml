@@ -20,6 +20,8 @@ crate-type = ["staticlib", "rlib"]
 zeebx = { path = "../../extern/zeebx", default-features = false }
 # the settings and the project's list of files are JSON
 serde_json = "1"
+# the C library's maths, the same in both builds (src/mathlib.rs)
+libm = "=0.2.16"
 
 [build-dependencies]
 # compiles the in-memory filesystem (../driver/memfs.cc)

@@ -93,18 +93,26 @@ else
 	fi
 fi
 
-# The same for a game drawn in 3D by the software renderer.
+# The same for a game drawn in 3D by the software renderer, played into its
+# first level: for Quake II, button 1 three times takes the menu to a new
+# game, and then the D-pad and ZR walk, turn and fire. Sound effects and
+# music play there, so this is also the test that the sound is the same from
+# run to run (two native runs) and in the sandbox. ZEEBX_GATE_3D_OPTIONS
+# replaces the script for another game.
+script3d="${ZEEBX_GATE_3D_OPTIONS:---frames 3600 --every 60 --press 950:6:10 --press 1150:6:10 --press 1350:6:10 --press 2450:200:1 --press 2700:150:8 --press 2900:300:201 --press 3250:200:4}"
 if [ ! -f "$game3d" ]; then
 	report "game:3d" SKIP "needs tests/roms/276153.7z, or ZEEBX_TEST_GAME_3D=<a 3D game>"
 elif [ ! -x "$native" ] || [ ! -x "$wbx/run-wbx" ] || [ ! -f "$wbx/core.wbx" ]; then
 	report "game:3d" SKIP "needs both builds (waterbox/build-native.sh, waterbox/build-guest.sh)"
 else
-	"$native" "$game3d" --frames "$frames" --every 60 > "$work/n3.out" 2> "$work/n3.err"
-	sandbox "$game3d" --frames "$frames" --every 60 > "$work/w3.out" 2> "$work/w3.err"
-	if [ -s "$work/n3.out" ] && cmp -s "$work/n3.out" "$work/w3.out" && grep -q "^frame=$frames " "$work/n3.out"; then
-		report "game:3d" PASS "$frames frames of a 3D game: the sandbox prints the native build's lines: $(last "$work/n3.out")"
+	"$native" "$game3d" $script3d > "$work/n3.out" 2> "$work/n3.err"
+	"$native" "$game3d" $script3d > "$work/m3.out" 2> "$work/m3.err"
+	sandbox "$game3d" $script3d > "$work/w3.out" 2> "$work/w3.err"
+	lines="$(wc -l < "$work/n3.out")"
+	if [ "$lines" -gt 2 ] && cmp -s "$work/n3.out" "$work/m3.out" && cmp -s "$work/n3.out" "$work/w3.out"; then
+		report "game:3d" PASS "a 3D game played into its first level, $lines lines: two native runs and the sandbox print the same, sound included"
 	else
-		report "game:3d" FAIL "native [$(last "$work/n3.out")] sandbox [$(last "$work/w3.out")] $(tail -1 "$work/w3.err")"
+		report "game:3d" FAIL "native [$(last "$work/n3.out")] native again [$(last "$work/m3.out")] sandbox [$(last "$work/w3.out")] $(tail -1 "$work/w3.err")"
 	fi
 fi
 

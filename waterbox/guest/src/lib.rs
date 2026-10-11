@@ -8,6 +8,8 @@
 #![allow(non_snake_case)]
 #![allow(clippy::missing_safety_doc)]
 
+pub mod mathlib;
+
 use serde_json::Value;
 use std::ffi::{c_char, CStr, CString};
 use std::path::Path;

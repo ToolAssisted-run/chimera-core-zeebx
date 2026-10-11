@@ -89,6 +89,17 @@ g++ -specs "$sr/lib/musl-gcc.specs" -mcmodel=large -fno-pic -fno-pie -fno-stack-
 	-Wl,--start-group "$lib" "$dyn/libdynarmic.a" "$dyn/libfmt.a" "$dyn/libmcl.a" "$dyn/libZydis.a" -Wl,--end-group \
 	-L"$sr/lib" -lstdc++ -lgcc -lgcc_eh -lc -lm
 sh "$minibox/source/guest/check-wbx.sh" "$out/core.wbx"
+
+# The maths must be the core's own (guest/src/mathlib.rs), in the sandbox as
+# natively: the core's library is ahead of the C library in the link, so its
+# sinf, powf and the rest are the ones every caller gets. One of musl's maths
+# helpers in the result means a function came from musl after all (one that
+# mathlib.rs does not define): say which.
+musl_math="$(nm "$out/core.wbx" | awk '{print $NF}' | grep -E '^__(sin|cos|tan|rem_pio2|expo2|math_(oflow|uflow|invalid|divzero|xflow))f?$' || true)"
+if [ -n "$musl_math" ]; then
+	echo "build-guest.sh: musl's maths reached the core ($(echo $musl_math)); add the function to guest/src/mathlib.rs" >&2
+	exit 1
+fi
 echo "built: $out/core.wbx"
 
 # run-wbx: runs core.wbx in the sandbox as the engine does (run-wbx.c)

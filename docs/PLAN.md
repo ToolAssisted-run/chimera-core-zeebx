@@ -240,6 +240,40 @@ build now also compares all of the game's memory at the end of the run.
 Measured on 279036 after 300 frames: 7 ranges, 82,945,164 bytes, the same
 digest natively and in the sandbox, and a written byte reads back.
 
+## Sound that differed from run to run (2026-10-11)
+
+Playing Quake II into its first level (button 1 three times from the menu,
+then walking, turning and firing) showed something the menus had not: the
+sound of the native build and of the sandbox differed from the frame the
+level's sounds began, while the clock, the picture and all of the game's
+memory were the same. Two causes, found one after the other.
+
+- **Two maths libraries.** Zeebx's sound code calls sin, pow and the like,
+  which came from glibc natively and from musl in the sandbox, and the two
+  round differently. Both builds now take them from one Rust library
+  (`waterbox/guest/src/mathlib.rs`, as the touchHLE core does), and
+  `build-guest.sh` refuses a core that still has musl's maths in it. This
+  moved the first difference sixty frames later and did not remove it.
+- **A hash map in the mixer.** Zeebx's mixer keeps the sounds that are
+  playing in a hash map and adds them up in the order it walks the map. A
+  hash map's order is random in every process, and floating-point addition
+  rounds differently in another order. So two NATIVE runs of the same game
+  did not make the same sound either, which is how it was found. Patch
+  0004 makes those two maps sorted ones.
+
+After both: two native runs print the same lines, and so does the sandbox,
+over 3,600 frames of that play, sound included. The test `game:3d` now does
+exactly this, so it is also the test of the sound.
+
+The hash map is a defect in Zeebx itself and has not been reported to its
+authors: that is the owner's to decide.
+
+Speed, the same 3,600 frames (60 s of game clock): 15 s natively, 59 s in
+the sandbox. In the level the sandbox runs at about real time on this
+computer (20 threads, of which the sandbox uses one). The native build draws
+the 3D picture on as many threads as the host has; the sandbox draws it on
+one.
+
 ## What is the owner's
 
 - A public repository, a row in Chimera's list of official cores, and

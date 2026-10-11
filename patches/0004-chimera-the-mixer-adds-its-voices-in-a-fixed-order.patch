@@ -1,0 +1,19 @@
+diff --git a/src/audio/mod.rs b/src/audio/mod.rs
+--- a/src/audio/mod.rs
++++ b/src/audio/mod.rs
+@@ -283,9 +283,13 @@
+ #[derive(Debug, Default)]
+ struct State {
+     /// As vozes, indexadas pelo objeto `IMedia` do guest que as criou.
+-    voices: std::collections::HashMap<u32, Voice>,
++    // Chimera: sorted maps, here and for the streams. The mixer adds the voices up in the
++    // order it walks them, and floating-point addition rounds differently in another order;
++    // a hash map's order is random in every process, so two runs of the same game did not
++    // make the same sound.
++    voices: std::collections::BTreeMap<u32, Voice>,
+     /// As vozes alimentadas aos poucos, pelo mesmo índice.
+-    streams: std::collections::HashMap<u32, Stream>,
++    streams: std::collections::BTreeMap<u32, Stream>,
+     /// Volume geral, de 0 a 1.
+     master: f32,
+     muted: bool,
