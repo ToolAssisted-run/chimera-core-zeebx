@@ -241,8 +241,20 @@ int main(int argc, char **argv)
 	membuf scratch = { 0 };
 	for (long frame = first; frame <= frames; frame++) {
 		if (rerecord) {
-			save(&scratch);
-			load(scratch.b, scratch.len);
+			/* RUN_WBX_BREAK_STALE_STATE=1, for seeing the test fail: half way
+			 * through, the state loaded is the one saved a frame earlier */
+			static membuf earlier;
+			const char *brk = getenv("RUN_WBX_BREAK_STALE_STATE");
+			if (brk && *brk && frame == (first + frames) / 2 && earlier.len) {
+				load(earlier.b, earlier.len);
+			} else {
+				save(&scratch);
+				load(scratch.b, scratch.len);
+			}
+			if (brk && *brk) {
+				earlier.len = 0;
+				mem_write((uintptr_t)&earlier, scratch.b, scratch.len);
+			}
 		}
 		uint64_t buttons = 0;
 		for (int p = 0; p < npress; p++)

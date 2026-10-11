@@ -80,7 +80,7 @@ Native build, software renderer, `waterbox/run-native`:
 
 | game | frames | game clock | host time | where it is |
 | --- | --- | --- | --- | --- |
-| 279036 (title not known yet) | 600 | 11.2 s | 1.1 s | main menu |
+| 279036, Um Jogo de Ovos | 600 | 11.2 s | 1.1 s | main menu |
 | 276153, Quake II | 900 | 15.3 s | 1.8 s | main menu |
 
 Two runs of 279036 from fresh work folders gave the same clock, instruction
@@ -187,6 +187,36 @@ Two things the first runs in `chimera-run` turned up: the engine mounts the
 game under a name the core has to look for (its own name, the full path, or
 "rom"), and it requires all five memory-domain functions even when there
 are no domains.
+
+## The test script (2026-10-11)
+
+`waterbox/run-gate.sh` runs nine tests, about three minutes with both games
+and `CHIMERA_ROOT` set. Each line says what was compared, and the script
+ends with how many passed, failed and were skipped.
+
+- `upstream:tests`: Zeebx's own unit tests (608 pass, 4 ignored). They need
+  no game, so they are what a public CI runner can run. At v0.4.2 they do
+  not compile as shipped: patch 0002 fixes the one stale line.
+- `game:repeats`, `input:pad`: two native runs print the same lines, and a
+  run with a button pressed prints others.
+- `game:sandbox`, `game:3d`: the sandboxed core prints the native build's
+  lines, for a 2D game and for a 3D one.
+- `state:every-frame`, `state:other-process`: savestates.
+- `frontend:picture`, `frontend:pads`: the package in `chimera-run`.
+
+Seen to fail, by hand:
+
+- a savestate that is one frame old, loaded half way
+  (`RUN_WBX_BREAK_STALE_STATE=1`): from frame 480 on the clock is 33 ms
+  behind and the lines differ;
+- the runner's picture from another frame (560 instead of 599) against
+  Chimera's: 307,033 of 307,200 pixels differ;
+- `input:pad` and `game:repeats` check each other: one needs two runs to
+  be the same, the other needs a run to differ.
+
+Chimera's window was also run with the package on Windows, driven by a
+script (`Chimera.exe --headless`): 600 frames of Um Jogo de Ovos (279036),
+the project saved with one controller's columns, a clean exit.
 
 ## What is the owner's
 
