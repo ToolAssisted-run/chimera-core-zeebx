@@ -1,0 +1,3 @@
+[submodule "extern/zeebx"]
+	path = extern/zeebx
+	url = https://github.com/ZeebxTeam/zeebx-emu

@@ -1,0 +1,26 @@
+[package]
+name = "zeebx_guest"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+# The core: Zeebx driven a frame at a time, behind the functions Chimera's
+# engine calls (src/lib.rs). Built twice from this one crate:
+#   - for the miniBox sandbox, as a staticlib that build-guest.sh links into
+#     core.wbx;
+#   - for the host, as the rlib the native runner (../run-native) calls
+#     exactly as the engine would.
+[lib]
+name = "zeebx_guest"
+crate-type = ["staticlib", "rlib"]
+
+[dependencies]
+# The Zeebx checkout at a fixed commit with this repository's patches
+# applied. No default features: no window, no sound card, no network.
+zeebx = { path = "../../extern/zeebx", default-features = false }
+
+[profile.release]
+opt-level = 2
+debug = 1
+# A panic in the sandbox is a crash: abort, so miniBox reports it.
+panic = "abort"

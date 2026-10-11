@@ -1,0 +1,15 @@
+[package]
+name = "run-native"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+# The native runner: Zeebx driven a frame at a time on the host, the way the
+# core drives it in the sandbox. A first version over the emulator's session,
+# to see the games run before the core's own functions exist.
+[dependencies]
+zeebx = { path = "../../extern/zeebx", default-features = false }
+
+[profile.release]
+opt-level = 2
+debug = 1
