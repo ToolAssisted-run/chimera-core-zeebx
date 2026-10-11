@@ -287,6 +287,41 @@ int main(int argc, char **argv)
 			fprintf(stderr, "run-wbx: saved after frame %ld (%zu bytes)\n", frame, scratch.len);
 		}
 	}
+	/* the game's memory, as RAM tools see it: run-native's line */
+	{
+		const int64_t *(*GetBusRanges)(int) = (const int64_t *(*)(int))proc("GetBusRanges");
+		const uint8_t *(*ReadBus)(int, int64_t, int) = (const uint8_t *(*)(int, int64_t, int))proc("ReadBus");
+		int (*PeekBus)(int, int) = (int (*)(int, int))proc("PeekBus");
+		void (*PokeBus)(int, int, int) = (void (*)(int, int, int))proc("PokeBus");
+		const int64_t *ranges = GetBusRanges(0);
+		/* the list is the core's until the next call: copy it */
+		int64_t list[128];
+		int n = 0;
+		while (n < 63 && ranges[2 * n + 1] > 0) {
+			list[2 * n] = ranges[2 * n];
+			list[2 * n + 1] = ranges[2 * n + 1];
+			n++;
+		}
+		uint64_t bytes = 0, digest = FNV_START;
+		for (int i = 0; i < n; i++) {
+			for (int64_t at = 0; at < list[2 * i + 1];) {
+				int64_t len = list[2 * i + 1] - at;
+				if (len > 65536)
+					len = 65536;
+				digest = fnv(digest, ReadBus(0, list[2 * i] + at, (int)len), (size_t)len);
+				at += len;
+			}
+			bytes += (uint64_t)list[2 * i + 1];
+		}
+		const char *poke = "no memory";
+		if (n > 0) {
+			const int before = PeekBus(0, (int)list[0]);
+			PokeBus(0, (int)list[0], before ^ 0xff);
+			poke = PeekBus(0, (int)list[0]) == (before ^ 0xff) ? "a written byte reads back" : "a written byte does NOT read back";
+			PokeBus(0, (int)list[0], before);
+		}
+		printf("bus ranges=%d bytes=%llu hash=%016llx (%s)\n", n, (unsigned long long)bytes, (unsigned long long)digest, poke);
+	}
 	if (ppm) {
 		const uint32_t *video = GetVideoBgra();
 		FILE *o = fopen(ppm, "wb");

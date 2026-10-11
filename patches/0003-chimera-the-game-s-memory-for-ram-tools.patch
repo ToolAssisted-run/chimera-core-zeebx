@@ -1,0 +1,36 @@
+diff --git a/src/session.rs b/src/session.rs
+--- a/src/session.rs
++++ b/src/session.rs
+@@ -990,6 +990,32 @@
+     }
+ 
+     /// Uma volta do laço de eventos. `Some` quando há desfecho, `None` para continuar.
++    /// Chimera: read the game's memory as the game sees it, for RAM tools. False when any of
++    /// the bytes asked for are not memory.
++    pub fn chimera_read(&self, addr: u32, buf: &mut [u8]) -> bool {
++        use crate::cpu::CpuBackend;
++        self.machine.cpu().read_mem(addr, buf).is_ok()
++    }
++
++    /// Chimera: write the game's memory, for RAM tools. Code that was already translated is
++    /// translated again if it was written over. False when the bytes are not writable memory.
++    pub fn chimera_write(&mut self, addr: u32, data: &[u8]) -> bool {
++        use crate::cpu::CpuBackend;
++        self.machine.cpu_mut().write_mem(addr, data).is_ok()
++    }
++
++    /// Chimera: where the game's writable memory is: the address and the length of each range.
++    pub fn chimera_ranges(&self) -> Vec<(u32, u32)> {
++        self.machine
++            .module()
++            .mem
++            .regions()
++            .iter()
++            .filter(|r| r.writable && !r.bytes.is_empty())
++            .map(|r| (r.base, r.bytes.len() as u32))
++            .collect()
++    }
++
+     /// Chimera: run until the game's clock reaches `target_ms` (milliseconds since the game
+     /// started), then stop. A frame of a TAS is a fixed slice of the game's clock, the same
+     /// length every time, whatever the game presents meanwhile; [`Session::run_frame`] ends at

@@ -1,0 +1,169 @@
+name: chimera waterbox core
+
+# Builds the core from a fresh clone, tests it, and publishes the package.
+#
+# What is tested here is less than what is tested before a push. No Zeebo
+# game may be put on a public runner, and every test that runs a game is
+# skipped here (the test script says SKIP for each). What does run here:
+#   - everything builds from the fixed Zeebx commit with the patches applied;
+#   - Zeebx's own unit tests pass (608 of them);
+#   - Chimera's own checks of the package: it loads, and what it declares
+#     (controllers, settings, file types) is well formed.
+# The tests with a game are run where the games are: docs/BUILDING.md.
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      kind:
+        description: 'dev (rolling) or nightly (dated). Blank means dev.'
+        required: false
+        default: ''
+        type: string
+  schedule:
+    # 04:50 UTC. A nightly is published only when main moved since the last
+    # one; the shared publishing workflow checks.
+    - cron: '50 4 * * *'
+
+# Keyed by the event as well as the branch: otherwise the nightly schedule
+# and a push to main cancel each other, and the publishing that depends on
+# the cancelled run is skipped with nothing reporting a failure.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+env:
+  CHIMERA_REF: main
+
+jobs:
+
+  gate:
+    name: build and test (package, Zeebx's unit tests, Chimera's package checks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Check out Chimera
+        uses: actions/checkout@v6
+        with:
+          repository: ToolAssisted-run/chimera
+          ref: ${{ env.CHIMERA_REF }}
+          path: chimera-checkout
+          submodules: recursive
+
+      - name: Install build dependencies
+        # The lib*-dev packages are what Chimera's own build needs; this core
+        # links none of them.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends meson ninja-build build-essential cmake pkg-config python3 mono-complete libgl1-mesa-dev libegl-dev libx11-dev libxext-dev libasound2-dev
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0'
+
+      - name: Rust (nightly)
+        # The sandboxed build compiles Rust's standard library for its own
+        # target (-Z build-std), which only the nightly toolchain does; the
+        # native build uses the same toolchain.
+        run: |
+          rustup toolchain install nightly --profile minimal -c rust-src
+          rustup default nightly
+          rustc --version && cargo --version
+
+      - name: Build Chimera's engine
+        working-directory: chimera-checkout
+        run: |
+          meson setup build/meson-linux --prefix "$PWD/build" --libdir dll
+          meson compile -C build/meson-linux
+          meson install -C build/meson-linux
+
+      - name: Build Chimera's interface
+        working-directory: chimera-checkout
+        run: dotnet build source/gui/Chimera.sln -c Release /nodeReuse:false -p:UseSharedCompilation=false
+
+      - name: Cache miniBox's sandbox toolchain
+        uses: actions/cache@v4
+        with:
+          path: |
+            chimera-checkout/extern/chimera-common-minibox/build/meson-linux
+            chimera-checkout/extern/chimera-common-minibox/build/meson-cpp
+          key: guest-cpp-${{ runner.os }}-${{ hashFiles('chimera-checkout/extern/chimera-common-minibox/.git') }}-${{ hashFiles('chimera-checkout/extern/chimera-common-minibox/meson.build') }}
+
+      - name: Build miniBox (the sandbox, and its C++ toolchain)
+        run: |
+          mb="$PWD/chimera-checkout/extern/chimera-common-minibox"
+          [ -f "$mb/build/meson-linux/build.ninja" ] || meson setup "$mb/build/meson-linux" "$mb"
+          meson compile -C "$mb/build/meson-linux"
+          [ -f "$mb/build/meson-cpp/build.ninja" ] || meson setup "$mb/build/meson-cpp" "$mb" -Dguest_cpp=true
+          meson compile -C "$mb/build/meson-cpp"
+
+      - name: Build the core natively
+        run: sh ./waterbox/build-native.sh
+
+      - name: Build the sandboxed core and the package
+        # The commit is the version the package is stamped with: this is the
+        # build that is published, so it is what a movie can name. A package
+        # built by hand is stamped "+local" instead.
+        env:
+          CORE_VERSION: ${{ github.sha }}
+        run: sh ./waterbox/build-package.sh -r "$GITHUB_WORKSPACE/chimera-checkout"
+
+      - name: Run the test script
+        # With no game on the runner every test but Zeebx's unit tests is
+        # skipped. A run in which those did not pass has tested nothing, so
+        # that test is asked for by name.
+        env:
+          CHIMERA_ROOT: ${{ github.workspace }}/chimera-checkout
+        run: |
+          rc=0
+          sh ./waterbox/run-gate.sh > gate.out 2>&1 || rc=$?
+          cat gate.out
+          [ "$rc" -eq 0 ]
+          grep -q '^upstream:tests  *PASS ' gate.out
+
+      - name: Chimera's checks of the package
+        working-directory: chimera-checkout
+        env:
+          CHIMERA_CORES_DIR: ${{ github.workspace }}/chimera-checkout/build/Cores
+        run: |
+          dotnet test source/gui/Chimera.Tests.Client.Common/Chimera.Tests.Client.Common.csproj \
+            -c Release --nologo \
+            --filter "FullyQualifiedName~InstalledCorePackagesTests|FullyQualifiedName~MnemonicUniquenessTests"
+
+      - name: Upload the package
+        uses: actions/upload-artifact@v7
+        with:
+          name: zeebx-${{ github.sha }}
+          path: chimera-checkout/build/Cores/zeebx.chimeraCore
+          if-no-files-found: error
+
+      - name: Upload the test output on failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: build-logs
+          path: gate.out
+
+  publish:
+    # What passed above, published as this core's own release: a rolling `dev`
+    # on every push to main, a dated `nightly-YYYY-MM-DD` from the scheduled
+    # run, through the one workflow every Chimera core publishes with.
+    name: publish
+    needs: [ gate ]
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: write
+    uses: ToolAssisted-run/chimera/.github/workflows/publish-core.yml@main
+    with:
+      core-id: zeebx
+      artifact: zeebx-${{ github.sha }}
+      package: zeebx.chimeraCore
+      kind: ${{ github.event.inputs.kind }}

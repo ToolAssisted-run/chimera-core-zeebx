@@ -10,7 +10,8 @@ Where it stands (2026-10-11): both of the owner's test games run in
 Chimera's sandbox a frame at a time and give exactly what the native build
 gives - the same clock, instruction count, picture and sound at every checked
 frame - including with a savestate saved and loaded before every frame, and
-with a savestate carried into another process. As a package
+with a savestate carried into another process; all of the game's memory is
+the same at the end as well. As a package
 (`zeebx.chimeraCore`) both games run in Chimera's headless runner on Linux
 and on Windows, with the same pictures. There is no test script yet,
 Chimera's window has not been tried, and nothing is published.
@@ -170,8 +171,7 @@ core's static library and `build-guest.sh` names them in the link.
   of third-party notices, which names Dynarmic, SQLite and every Rust
   library with its licence. That list was written for Zeebx's desktop
   program, so it also names libraries this core does not link.
-- No memory is offered to RAM tools yet: the functions are there and say
-  there are no domains.
+- Memory for RAM tools came the same day: see "The game's memory" below.
 
 What was measured:
 
@@ -217,6 +217,28 @@ Seen to fail, by hand:
 Chimera's window was also run with the package on Windows, driven by a
 script (`Chimera.exe --headless`): 600 frames of Um Jogo de Ovos (279036),
 the project saved with one controller's columns, a clean exit.
+
+## The game's memory, for RAM tools (2026-10-11)
+
+RAM Watch and RAM Search get one bus, "Memory": the game's 32-bit address
+space at the addresses the game itself uses (patch 0003 adds the read, the
+write and the list of ranges to Zeebx's session). Most of that space is
+empty, so the core also says where the game's writable memory is
+(`GetBusRanges`): seven ranges, 82.9 MB in the two test games - the game's
+own data, its heap, its stack, and the console's objects and surfaces. A
+write goes through Zeebx's own path, which translates code again if it was
+written over.
+
+No memory domains are offered. The memory the recompiler runs on is a copy
+Zeebx's processor owns, split into ranges, and a bus shows it at the game's
+own addresses, which is what a person searching for a value wants.
+
+Both runners now end with one line about the bus: how many ranges, how many
+bytes, a digest of every byte read through the bus, and whether a byte that
+is written reads back. So every comparison of the sandbox with the native
+build now also compares all of the game's memory at the end of the run.
+Measured on 279036 after 300 frames: 7 ranges, 82,945,164 bytes, the same
+digest natively and in the sandbox, and a written byte reads back.
 
 ## What is the owner's
 

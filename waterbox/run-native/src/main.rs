@@ -103,6 +103,35 @@ fn main() {
             break;
         }
     }
+    // The game's memory, as RAM tools see it: every range the bus names, read
+    // through the bus; then one byte written, read back and put right.
+    unsafe {
+        let ranges = core::GetBusRanges(0);
+        let (mut count, mut bytes, mut digest) = (0u64, 0u64, FNV_START);
+        let mut first: Option<i64> = None;
+        let mut i = 0;
+        while *ranges.add(2 * i + 1) > 0 {
+            let (base, length) = (*ranges.add(2 * i), *ranges.add(2 * i + 1));
+            first.get_or_insert(base);
+            let mut at = 0i64;
+            while at < length {
+                let n = (length - at).min(65536) as i32;
+                digest = fnv(digest, std::slice::from_raw_parts(core::ReadBus(0, base + at, n), n as usize));
+                at += i64::from(n);
+            }
+            count += 1;
+            bytes += length as u64;
+            i += 1;
+        }
+        let mut poke = "no memory";
+        if let Some(base) = first {
+            let before = core::PeekBus(0, base as i32);
+            core::PokeBus(0, base as i32, before ^ 0xff);
+            poke = if core::PeekBus(0, base as i32) == before ^ 0xff { "a written byte reads back" } else { "a written byte does NOT read back" };
+            core::PokeBus(0, base as i32, before);
+        }
+        println!("bus ranges={count} bytes={bytes} hash={digest:016x} ({poke})");
+    }
     eprintln!("run-native: {:.1} s of host time", started.elapsed().as_secs_f64());
     if let Some(path) = ppm {
         let video = unsafe { std::slice::from_raw_parts(core::GetVideoBgra(), pixels) };

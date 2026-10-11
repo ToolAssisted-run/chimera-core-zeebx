@@ -454,7 +454,7 @@ pub extern "C" fn GetSaveDataFileBuffer(index: i32) -> *const u8 {
 
 // ---- Memory ------------------------------------------------------------------------
 
-// The game's memory is not offered to RAM tools yet.
+// No memory domains: the game's memory is offered as a bus, below.
 #[no_mangle]
 pub extern "C" fn GetMemoryDomainCount() -> i32 {
     0
@@ -474,4 +474,86 @@ pub extern "C" fn GetMemoryDomainSize(_index: i32) -> u64 {
 #[no_mangle]
 pub extern "C" fn GetMemoryDomainWritable(_index: i32) -> i32 {
     0
+}
+
+// The game's 32-bit address space, as the game sees it. Most of it is empty:
+// GetBusRanges says where the game's writable memory is (its data, its heap,
+// its stack and the console's objects), so that a search looks only there.
+
+static mut BUS_RUN: [u8; 65536] = [0; 65536];
+static mut BUS_RANGES: Vec<i64> = Vec::new();
+
+#[no_mangle]
+pub extern "C" fn GetBusCount() -> i32 {
+    core().map(|_| 1).unwrap_or(0)
+}
+#[no_mangle]
+pub extern "C" fn GetBusName(_index: i32) -> *const u8 {
+    b"Memory\0".as_ptr()
+}
+#[no_mangle]
+pub extern "C" fn GetBusSize(_index: i32) -> i64 {
+    1i64 << 32
+}
+#[no_mangle]
+pub extern "C" fn GetBusWritable(_index: i32) -> i32 {
+    1
+}
+#[no_mangle]
+pub extern "C" fn PeekBus(bus: i32, addr: i32) -> i32 {
+    let mut byte = [0u8; 1];
+    if let (0, Some(core)) = (bus, core()) {
+        core.session.chimera_read(addr as u32, &mut byte);
+    }
+    i32::from(byte[0])
+}
+#[no_mangle]
+pub extern "C" fn PokeBus(bus: i32, addr: i32, value: i32) {
+    if let (0, Some(core)) = (bus, core()) {
+        core.session.chimera_write(addr as u32, &[value as u8]);
+    }
+}
+/// `len` bytes from `addr` (at most 65536), until the next call. Where there
+/// is no memory the bytes are zero.
+#[no_mangle]
+#[allow(static_mut_refs)]
+pub extern "C" fn ReadBus(bus: i32, addr: i64, len: i32) -> *const u8 {
+    let run = unsafe { &mut BUS_RUN };
+    let len = (len.max(0) as usize).min(run.len());
+    run[..len].fill(0);
+    if let (0, Some(core)) = (bus, core()) {
+        if addr >= 0 && addr + len as i64 <= 1i64 << 32 {
+            // in one piece when the run lies in one range of memory, a page
+            // at a time when it does not
+            if !core.session.chimera_read(addr as u32, &mut run[..len]) {
+                run[..len].fill(0);
+                let mut at = 0usize;
+                while at < len {
+                    let page_end = (((addr as usize + at) | 0xfff) + 1 - addr as usize).min(len);
+                    if !core.session.chimera_read((addr as usize + at) as u32, &mut run[at..page_end]) {
+                        run[at..page_end].fill(0);
+                    }
+                    at = page_end;
+                }
+            }
+        }
+    }
+    run.as_ptr()
+}
+/// Where the bus has memory a game can write: (address, length) pairs, ended
+/// by a pair of no length.
+#[no_mangle]
+#[allow(static_mut_refs)]
+pub extern "C" fn GetBusRanges(bus: i32) -> *const i64 {
+    let ranges = unsafe { &mut BUS_RANGES };
+    ranges.clear();
+    if let (0, Some(core)) = (bus, core()) {
+        for (base, length) in core.session.chimera_ranges() {
+            ranges.push(i64::from(base));
+            ranges.push(i64::from(length));
+        }
+    }
+    ranges.push(0);
+    ranges.push(0);
+    ranges.as_ptr()
 }

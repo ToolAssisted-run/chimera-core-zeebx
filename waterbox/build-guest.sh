@@ -75,7 +75,8 @@ for e in Init GetLoadError SetAxis FrameAdvance IsRunning GetFrameCount GetMachi
 	GetVsyncDenominator GetAudio GetAudioSampleCount IsButtonActive IsAxisActive \
 	GetSaveDataFileCount GetSaveDataFileName GetSaveDataFileSize GetSaveDataFileBuffer \
 	GetMemoryDomainCount GetMemoryDomainName GetMemoryDomainPtr GetMemoryDomainSize \
-	GetMemoryDomainWritable; do
+	GetMemoryDomainWritable GetBusCount GetBusName GetBusSize GetBusWritable PeekBus PokeBus \
+	ReadBus GetBusRanges; do
 	exports="$exports -Wl,-u,$e"
 done
 
