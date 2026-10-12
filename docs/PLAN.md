@@ -6,7 +6,13 @@ A Chimera core for the Zeebo, the console TecToy sold in Brazil and Mexico
 from 2009, built on Zeebx (https://github.com/ZeebxTeam/zeebx-emu). Requested
 in chimera issue 240. The owner, 2026-10-11: "Let's give Zeebo a try first".
 
-Where it stands (2026-10-11): both of the owner's test games run in
+Where it stands (2026-10-12): published. The repository is public, CI
+builds and publishes the package, and the core is in Chimera's list of
+official cores. The sections below say what was done and measured, in
+order; "Published" at the end says what the published build was tested
+with.
+
+Where it stood the day before (2026-10-11): both of the owner's test games run in
 Chimera's sandbox a frame at a time and give exactly what the native build
 gives - the same clock, instruction count, picture and sound at every checked
 frame - including with a savestate saved and loaded before every frame, and
@@ -315,9 +321,36 @@ the same for a run that had gone wrong. It now compares everything from the
 last frame's line on. Seen to fail: a state saved after frame 449 and
 labelled 450 ends 17 ms behind with other sound.
 
+## Published (2026-10-12)
+
+The owner: "publish". What that took:
+
+- The first build on a CI runner failed at the last step, linking the
+  sandboxed core, with "relocation truncated to fit ... undefined symbol
+  pthread_cond_wait". The runner has GCC 13 and this machine GCC 14. GCC's
+  unwinding library refers to the thread functions only weakly, and with
+  GCC 13 nothing pulled them out of the C library. The link now asks for
+  them by name (`waterbox/build-guest.sh`), as the touchHLE core's does.
+  Reproduced here by putting GCC 13 in front: the old script fails with the
+  runner's message, the new one links.
+- On a runner the test script runs 1 test and skips 9, because no game may
+  be there. So the published package, "Development build 0d06be4e", was
+  fetched back and tested here with both games: 10 tests, none failed, none
+  skipped. It was built by another compiler than the native build it is
+  compared with, and prints the same lines.
+- The same package in Chimera's headless runner on Windows and on Linux:
+  the same picture after 600 frames of Um Jogo de Ovos and after 900 frames
+  of Quake II.
+- Chimera's roster and package tests against it: 21 of 21.
+
+Still not done: the console's system font and a MIDI sound bank (neither
+could be tested with the two games at hand), the keypad keys and the motion
+controller. Nobody has used the core by hand in Chimera's window yet; a
+script has (an earlier build, on Windows, 600 frames and a saved project).
+
 ## What is the owner's
 
-- A public repository, a row in Chimera's list of official cores, and
-  anything said on issue 240.
+- Anything reported to Zeebx's authors. The mixer defect described above
+  ("Sound that differed from run to run") has not been reported.
 - The two test games are the owner's files, copied to `tests/roms/`, which
   git ignores.
