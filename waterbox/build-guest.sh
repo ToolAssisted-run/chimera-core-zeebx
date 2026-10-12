@@ -80,9 +80,16 @@ for e in Init GetLoadError SetAxis FrameAdvance IsRunning GetFrameCount GetMachi
 	exports="$exports -Wl,-u,$e"
 done
 
+# The pthread names are asked for by name because GCC's unwinding library
+# (libgcc_eh) only refers to them weakly: left alone, GCC 13's link ends with
+# "relocation truncated to fit ... undefined symbol pthread_cond_wait", which
+# is what the first build on a CI runner did. GCC 14 happens not to need it.
 g++ -specs "$sr/lib/musl-gcc.specs" -mcmodel=large -fno-pic -fno-pie -fno-stack-protector \
 	-static -no-pie -Wl,--eh-frame-hdr,-O2,--no-relax,-z,stack-size=8388608 \
 	-T "$minibox/source/guest/linkscript.T" $exports \
+	-Wl,-u,pthread_mutexattr_init -Wl,-u,pthread_mutexattr_settype \
+	-Wl,-u,pthread_mutexattr_destroy -Wl,-u,pthread_once -Wl,-u,pthread_key_create \
+	-Wl,-u,pthread_cond_wait -Wl,-u,pthread_cond_broadcast \
 	-o "$out/core.wbx" \
 	"$mbc/source/guest/cxxglue.c.o" "$mbc/source/guest/emulibc.c.o" \
 	"$out/guest-syscalls.o" "$out/libgcc-builtins.o" \
