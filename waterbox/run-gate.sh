@@ -18,6 +18,28 @@ root="$(cd "$here/.." && pwd)"
 native="$root/build/native/release/run-native"
 wbx="$root/build/wbx"
 work="$(mktemp -d)"
+# A game runs only in a project (Chimera, 2026-10-26): crun_game <package>
+# <game> <movie> [chimera-run's options] makes one of the game and the movie,
+# with any --settings and --firmware given, and runs it with the rest.
+crun_quote() { printf "'%s'" "$(printf '%s' "$1" | sed "s/'/'\\\\''/g")"; }
+crun_game() {
+	cg_pkg="$1" cg_game="$2" cg_movie="$3" cg_made=""
+	shift 3
+	cg_n=$#
+	while [ "$cg_n" -gt 0 ]; do
+		case "$1" in
+			--settings) cg_made="$cg_made --settings $(crun_quote "$2")"; shift 2; cg_n=$((cg_n - 2)); continue ;;
+			--settings=*) cg_made="$cg_made --settings $(crun_quote "${1#--settings=}")"; shift; cg_n=$((cg_n - 1)); continue ;;
+			--firmware) cg_made="$cg_made --firmware $(crun_quote "$2")"; set -- "$@" "$1" "$2"; shift 2; cg_n=$((cg_n - 2)); continue ;;
+			--firmware=*) cg_made="$cg_made --firmware $(crun_quote "${1#--firmware=}")"; set -- "$@" "$1"; shift; cg_n=$((cg_n - 1)); continue ;;
+		esac
+		set -- "$@" "$1"; shift; cg_n=$((cg_n - 1))
+	done
+	cg_dir="$(mktemp -d "$work/project.XXXXXX")"
+	eval "env -u DISPLAY \"\$engine\" --new-project \"\$cg_dir/game.chimeraProject\" \"\$cg_pkg\" \"\$cg_game\" \"\$cg_movie\" $cg_made" \
+		> "$cg_dir/make.log" 2>&1 || { echo "chimera-run: no project made: $(tail -1 "$cg_dir/make.log")" >&2; return 2; }
+	env -u DISPLAY "$engine" --project "$cg_dir/game.chimeraProject" "$cg_pkg" --files "$(dirname "$cg_game")" "$@"
+}
 trap 'rm -rf "$work"' EXIT
 ok=0; failed=0; skipped=0
 report() { # <test> <PASS|FAIL|SKIP> <what>
@@ -186,7 +208,7 @@ open(sys.argv[1], "w").write("\n".join(rows) + "\n")
 PYMOVIE
 		# chimera-run counts its screenshots from 0: number N is the picture
 		# after N+1 frames
-		env -u DISPLAY "$engine" "$package" "$game3d" "$work/level.movie" --screenshot "$((fe_frames - 1))=$work/fe.tga" \
+		crun_game "$package" "$game3d" "$work/level.movie" --screenshot "$((fe_frames - 1))=$work/fe.tga" \
 			--export-savedata "$work/fe-saved" > "$work/fe.out" 2>&1
 		ran=$?
 		sandbox "$game3d" --frames "$fe_frames" --every "$fe_frames" --press 950:6:10 --press 1150:6:10 --press 1350:6:10 \
@@ -238,7 +260,7 @@ PYMARK
 		fi
 	fi
 	bars() { # <how many controllers>: the bars in a recorded row
-		env -u DISPLAY "$engine" "$package" "$game" "$work/empty.movie" --frames 3 --record "$work/pads$1.movie" \
+		crun_game "$package" "$game" "$work/empty.movie" --frames 3 --record "$work/pads$1.movie" \
 			--settings "{\"pads\":\"$1\"}" > "$work/pads$1.out" 2>&1
 		head -1 "$work/pads$1.movie" 2> /dev/null | tr -cd '|' | wc -c
 	}
