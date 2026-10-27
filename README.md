@@ -4,7 +4,7 @@ A Zeebo core for [Chimera](https://github.com/ToolAssisted-run/chimera), the
 frontend for tool-assisted speedruns. The Zeebo is the console TecToy sold in
 Brazil and Mexico from 2009. The core is built on
 [Zeebx](https://github.com/ZeebxTeam/zeebx-emu) and produces one file,
-`zeebx.chimeraCore`, that goes in Chimera's `Cores` folder.
+`zeebx.chimeraCore`, that goes in Chimera's `cores` folder.
 
 ## Status
 

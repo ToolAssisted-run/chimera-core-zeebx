@@ -21,7 +21,7 @@ done on Ubuntu 24.04. A build from nothing takes about three minutes on a
 
 ```sh
 sudo apt-get install -y --no-install-recommends meson ninja-build \
-  build-essential cmake pkg-config python3 mono-complete
+  build-essential cmake pkg-config python3
 ```
 
 miniBox, in the Chimera checkout:
@@ -100,9 +100,7 @@ Chimera's own checks of an installed package:
 
 ```sh
 cd <chimera>
-CHIMERA_CORES_DIR=$PWD/build/Cores dotnet test \
-  source/gui/Chimera.Tests.Client.Common/Chimera.Tests.Client.Common.csproj -c Release \
-  --filter "FullyQualifiedName~InstalledCorePackagesTests|FullyQualifiedName~MnemonicUniquenessTests"
+CHIMERA_CORES_DIR=$PWD/build/Cores build/meson-linux/source/ui/test-packages
 ```
 
 ## What CI does

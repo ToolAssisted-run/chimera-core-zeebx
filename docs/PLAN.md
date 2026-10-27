@@ -222,7 +222,7 @@ Seen to fail, by hand:
   be the same, the other needs a run to differ.
 
 Chimera's window was also run with the package on Windows, driven by a
-script (`Chimera.exe --headless`): 600 frames of Um Jogo de Ovos (279036),
+script (Chimera's C# window, run with `--headless`; since replaced by the Qt window): 600 frames of Um Jogo de Ovos (279036),
 the project saved with one controller's columns, a clean exit.
 
 ## The game's memory, for RAM tools (2026-10-11)
