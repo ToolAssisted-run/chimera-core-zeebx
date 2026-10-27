@@ -181,8 +181,7 @@ core's static library and `build-guest.sh` names them in the link.
 
 What was measured:
 
-- Chimera's package checks (`InstalledCorePackagesTests`,
-  `MnemonicUniquenessTests`): 17 of 17.
+- Chimera's package checks: 17 of 17.
 - `chimera-run` on Linux: 279036 for 600 frames, recording a movie (one
   controller's columns: 4 axes and 14 buttons). Its picture matched
   `run-wbx`'s - but on a still screen, which proved less than it seemed:
@@ -222,7 +221,7 @@ Seen to fail, by hand:
   be the same, the other needs a run to differ.
 
 Chimera's window was also run with the package on Windows, driven by a
-script (Chimera's C# window, run with `--headless`; since replaced by the Qt window): 600 frames of Um Jogo de Ovos (279036),
+script (Chimera's window, run with `--headless`): 600 frames of Um Jogo de Ovos (279036),
 the project saved with one controller's columns, a clean exit.
 
 ## The game's memory, for RAM tools (2026-10-11)
