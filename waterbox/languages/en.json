@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "Pads is %1, and has to be 1 or 2.",
+		"error.bad_rtc": "The clock's start, %1, is not a time from 1980-01-06 on.",
+		"error.no_button": "Zeebx has no button named %1.",
+		"error.no_file": "No game file is in the project.",
+		"error.no_storage": "The console's storage could not be made.",
+		"error.not_opened": "'%1' could not be opened.",
+		"error.not_package": "'%1' is not a .7z, .zip or .mod file. This core runs Zeebo games packaged that way.",
+		"error.not_read": "%1 could not be read: %2",
+		"error.not_started": "The game did not start: %1",
+		"error.save_bad_path": "The save data holds %1, which is not a path inside the saves folder.",
+		"error.save_entry": "The save data's %1 could not be read: %2",
+		"error.save_not_put_back": "The save data's %1 could not be put back.",
+		"error.save_not_zip": "The save data is not a zip: %1",
+		"error.settings_not_json": "The settings are not JSON: %1",
+		"error.settings_not_object": "The settings are not a JSON object.",
+		"error.storage": "The console's storage could not be made: %1",
+		"setting.pads": "Controllers",
+		"setting.pads.about": "How many controllers are plugged in. The console has two ports. It is part of the machine: a game is told how many there are, and a movie has columns only for those.",
+		"setting.rtc_start": "Clock at Power-On",
+		"setting.rtc_start.about": "The date and time the console's clock shows when the game starts, in seconds since 1970. For example 1262304000 is 2010-01-01, in the years the Zeebo was sold. It cannot be earlier than 1980-01-06, which is the date the console's system counts from. After the start the clock runs with the game and never with your computer. It is part of the machine: a game that picks its random numbers from the time plays differently with another date.",
+		"slot.game": "Game",
+		"slot.game.help": "The game as it was dumped from a console: a .7z or .zip archive with a 'mif' folder and a 'mod' folder in it, or the game's .mod file. Zeebx's compatibility list (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) says which games work.",
+		"slot.savedata": "Save data",
+		"slot.savedata.help": "What the game already saved, as Emulator > Export Save Data... wrote it. It is a .zip of the console's saves folder, and it is put back before the game starts."
+	}
+}

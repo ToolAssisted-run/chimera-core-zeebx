@@ -99,6 +99,17 @@ fn core() -> Option<&'static mut Core> {
     unsafe { CORE.as_mut() }
 }
 
+/// A text a person reads: a key of languages/en.json, each of its arguments
+/// after a 0x1F byte (chimera docs/translations.md).
+fn say(key: &str, args: &[&str]) -> String {
+    let mut out = key.to_string();
+    for arg in args {
+        out.push('\u{1f}');
+        out.push_str(arg);
+    }
+    out
+}
+
 #[allow(static_mut_refs)]
 fn fail(why: String) -> i32 {
     eprintln!("zeebx core: {why}");
@@ -135,10 +146,10 @@ impl Settings {
         let root: Value = if json.trim().is_empty() {
             Value::Object(Default::default())
         } else {
-            serde_json::from_str(json).map_err(|e| format!("the settings are not JSON: {e}"))?
+            serde_json::from_str(json).map_err(|e| say("error.settings_not_json", &[&e.to_string()]))?
         };
         let Value::Object(map) = root else {
-            return Err("the settings are not a JSON object".to_string());
+            return Err(say("error.settings_not_object", &[]));
         };
         for (key, value) in &map {
             let text = as_text(value);
@@ -149,14 +160,14 @@ impl Settings {
                         .parse::<u64>()
                         .ok()
                         .filter(|&t| t >= 315_964_800)
-                        .ok_or_else(|| format!("rtc_start: {text:?} is not a time from 1980-01-06 on"))?
+                        .ok_or_else(|| say("error.bad_rtc", &[&text]))?
                 }
                 "pads" => {
                     s.pads = text
                         .parse::<usize>()
                         .ok()
                         .filter(|p| (1..=PORTS).contains(p))
-                        .ok_or_else(|| format!("pads: {text:?} is not 1 or 2"))?
+                        .ok_or_else(|| say("error.bad_pads", &[&text]))?
                 }
                 _ => {} // a setting this build does not know is not an error
             }
@@ -171,20 +182,20 @@ impl Settings {
 /// paths under the console's saves folder, as GetSaveDataFileName names them.
 pub fn read_save_zip(bytes: &[u8]) -> Result<Vec<(String, Vec<u8>)>, String> {
     use std::io::Read;
-    let mut zip = zip::ZipArchive::new(std::io::Cursor::new(bytes)).map_err(|e| format!("not a zip: {e}"))?;
+    let mut zip = zip::ZipArchive::new(std::io::Cursor::new(bytes)).map_err(|e| say("error.save_not_zip", &[&e.to_string()]))?;
     let mut out = Vec::new();
     for i in 0..zip.len() {
-        let mut f = zip.by_index(i).map_err(|e| e.to_string())?;
+        let mut f = zip.by_index(i).map_err(|e| say("error.save_not_zip", &[&e.to_string()]))?;
         if f.is_dir() {
             continue;
         }
         let name = f.name().replace('\\', "/");
         // a name that would leave the saves folder is not a save
         if name.starts_with('/') || name.split('/').any(|part| part == ".." || part.is_empty()) {
-            return Err(format!("{name}: not a path inside the saves folder"));
+            return Err(say("error.save_bad_path", &[&name]));
         }
         let mut data = Vec::new();
-        f.read_to_end(&mut data).map_err(|e| format!("{name}: {e}"))?;
+        f.read_to_end(&mut data).map_err(|e| say("error.save_entry", &[&name, &e.to_string()]))?;
         out.push((name, data));
     }
     out.sort_by(|a, b| a.0.cmp(&b.0));
@@ -218,17 +229,17 @@ pub fn start_named(
 ) -> Result<(), String> {
     let lower = base.to_ascii_lowercase();
     if !(lower.ends_with(".7z") || lower.ends_with(".zip") || lower.ends_with(".mod")) {
-        return Err(format!("{base} is not a .7z, .zip or .mod file: this core runs Zeebo games packaged that way"));
+        return Err(say("error.not_package", &[base]));
     }
     let inside = format!("{GAME_DIR}/{base}");
     unsafe {
         // every file the console makes is dated the moment it was switched on
         chimera_memfs_set_time(settings.rtc_start as i64);
         if chimera_memfs_mkdirs(c(STORAGE_ROOT).as_ptr()) == 0 || chimera_memfs_mkdirs(c(GAME_DIR).as_ptr()) == 0 {
-            return Err("the console's storage could not be made".to_string());
+            return Err(say("error.no_storage", &[]));
         }
         if chimera_memfs_graft(c(&inside).as_ptr(), c(host_name).as_ptr()) == 0 {
-            return Err(format!("{host_name} could not be opened"));
+            return Err(say("error.not_opened", &[host_name]));
         }
     }
     // what was saved before goes back where the console keeps it, before
@@ -236,24 +247,24 @@ pub fn start_named(
     for (name, bytes) in &save_data {
         let path = format!("{STORAGE_ROOT}/saves/{name}");
         if unsafe { chimera_memfs_put(c(&path).as_ptr(), bytes.as_ptr(), bytes.len()) } == 0 {
-            return Err(format!("the save data: {name} could not be put back"));
+            return Err(say("error.save_not_put_back", &[name]));
         }
     }
     zeebx::machine::FIXED_START_UNIX_SECONDS.store(settings.rtc_start, std::sync::atomic::Ordering::Relaxed);
 
     let storage = StoragePaths::from_root(STORAGE_ROOT);
-    storage.create_dirs().map_err(|e| format!("the console's storage: {e}"))?;
+    storage.create_dirs().map_err(|e| say("error.storage", &[&e.to_string()]))?;
     let mut ports = [None; zeebx::input::PORTAS];
     for port in ports.iter_mut().take(settings.pads) {
         *port = Some(Aparelho::Controle);
     }
     let mut session = Session::start_software_with_storage(Path::new(&inside), ports, ZWheel::default(), &storage)
-        .map_err(|e| format!("the game did not start: {e}"))?;
+        .map_err(|e| say("error.not_started", &[&e.to_string()]))?;
     let mixer = session.grava_audio(SAMPLE_RATE);
 
     let mut button_index = [0usize; BUTTONS.len()];
     for (i, (_, name)) in BUTTONS.iter().enumerate() {
-        button_index[i] = Pad::button_by_name(name).ok_or_else(|| format!("Zeebx has no button named {name}"))?;
+        button_index[i] = Pad::button_by_name(name).ok_or_else(|| say("error.no_button", &[name]))?;
     }
     unsafe {
         CORE = Some(Core {
@@ -273,7 +284,7 @@ pub fn start_named(
 }
 
 fn read_mount(name: &str) -> Result<Vec<u8>, String> {
-    std::fs::read(name).map_err(|e| format!("{name}: {e}"))
+    std::fs::read(name).map_err(|e| say("error.not_read", &[name, &e.to_string()]))
 }
 
 /// The first file of slot `id` in the project's slot map ("slots": a JSON
@@ -299,7 +310,7 @@ pub extern "C" fn Init() -> i32 {
         Some(n) => n,
         None => match read_mount("rom.name") {
             Ok(n) => String::from_utf8_lossy(&n).trim().to_string(),
-            Err(e) => return fail(format!("no game: {e}")),
+            Err(_) => return fail(say("error.no_file", &[])),
         },
     };
     // The engine mounts the file under its own name, with or without the
@@ -317,7 +328,7 @@ pub extern "C" fn Init() -> i32 {
             let zip_base = zip_name.rsplit(['/', '\\']).next().unwrap_or(&zip_name).to_string();
             match read_mount(&zip_base).and_then(|b| read_save_zip(&b)) {
                 Ok(files) => files,
-                Err(e) => return fail(format!("the save data {zip_base}: {e}")),
+                Err(e) => return fail(e),
             }
         }
     };

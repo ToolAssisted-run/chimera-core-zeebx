@@ -3,7 +3,7 @@
   "slots": [
     {
       "id": "game",
-      "title": "Game",
+      "title": "slot.game",
       "min": 1,
       "max": 1,
       "formats": [
@@ -11,17 +11,17 @@
         "zip",
         "mod"
       ],
-      "help": "The game as it was dumped from a console: a .7z or .zip archive with a 'mif' folder and a 'mod' folder in it, or the game's .mod file. Zeebx's compatibility list (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) says which games work."
+      "help": "slot.game.help"
     },
     {
       "id": "savedata",
-      "title": "Save data",
+      "title": "slot.savedata",
       "min": 0,
       "max": 1,
       "formats": [
         "zip"
       ],
-      "help": "What the game already saved, as Emulator > Export Save Data... wrote it. It is a .zip of the console's saves folder, and it is put back before the game starts."
+      "help": "slot.savedata.help"
     }
   ]
 }
