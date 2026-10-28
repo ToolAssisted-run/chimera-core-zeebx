@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "Mandos es %1, y tiene que ser 1 o 2.",
+		"error.bad_rtc": "El inicio del reloj, %1, no es una hora de 1980-01-06 en adelante.",
+		"error.no_button": "Zeebx no tiene ningún botón llamado %1.",
+		"error.no_file": "No hay ningún archivo de juego en el proyecto.",
+		"error.no_storage": "No se pudo crear el almacenamiento de la consola.",
+		"error.not_opened": "No se pudo abrir '%1'.",
+		"error.not_package": "'%1' no es un archivo .7z, .zip ni .mod. Este núcleo ejecuta juegos de Zeebo empaquetados de esa manera.",
+		"error.not_read": "No se pudo leer %1: %2",
+		"error.not_started": "El juego no arrancó: %1",
+		"error.save_bad_path": "Los datos de guardado contienen %1, que no es una ruta dentro de la carpeta de partidas.",
+		"error.save_entry": "No se pudo leer %1 de los datos de guardado: %2",
+		"error.save_not_put_back": "No se pudo devolver %1 de los datos de guardado.",
+		"error.save_not_zip": "Los datos de guardado no son un zip: %1",
+		"error.settings_not_json": "Los ajustes no son JSON: %1",
+		"error.settings_not_object": "Los ajustes no son un objeto JSON.",
+		"error.storage": "No se pudo crear el almacenamiento de la consola: %1",
+		"setting.pads": "Mandos",
+		"setting.pads.about": "Cuántos mandos están conectados. La consola tiene dos puertos. Es parte de la máquina: a un juego se le dice cuántos hay, y una película tiene columnas solo para ellos.",
+		"setting.rtc_start": "Hora al encender",
+		"setting.rtc_start.about": "La fecha y hora que muestra el reloj de la consola cuando empieza el juego, en segundos desde 1970. Por ejemplo 1262304000 es 2010-01-01, en los años en que se vendió la Zeebo. No puede ser anterior a 1980-01-06, que es la fecha desde la que cuenta el sistema de la consola. Tras el arranque el reloj avanza con el juego y nunca con tu ordenador. Es parte de la máquina: un juego que toma sus números aleatorios de la hora se comporta de otra manera con otra fecha.",
+		"slot.game": "Juego",
+		"slot.game.help": "El juego tal como se volcó de la consola: un archivo .7z o .zip con una carpeta 'mif' y una carpeta 'mod' dentro, o el archivo .mod del juego. La lista de compatibilidad de Zeebx (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) indica qué juegos funcionan.",
+		"slot.savedata": "Datos de guardado",
+		"slot.savedata.help": "Lo que el juego ya guardó, tal como lo escribió Emulador > Exportar datos de guardado... Es un .zip de la carpeta de partidas de la consola, y se vuelve a poner antes de que empiece el juego."
+	}
+}

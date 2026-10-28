@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "Pads adalah %1, dan harus 1 atau 2.",
+		"error.bad_rtc": "Waktu mulai jam, %1, bukan waktu dari 6 Januari 1980 ke atas.",
+		"error.no_button": "Zeebx tidak memiliki tombol bernama %1.",
+		"error.no_file": "Tidak ada file game dalam proyek.",
+		"error.no_storage": "Penyimpanan konsol tidak dapat dibuat.",
+		"error.not_opened": "'%1' tidak dapat dibuka.",
+		"error.not_package": "'%1' bukan file .7z, .zip, atau .mod. Core ini menjalankan game Zeebo yang dikemas dengan cara itu.",
+		"error.not_read": "%1 tidak dapat dibaca: %2",
+		"error.not_started": "Game tidak berhasil dimulai: %1",
+		"error.save_bad_path": "Data simpanan berisi %1, yang bukan jalur di dalam folder simpanan.",
+		"error.save_entry": "%1 dari data simpanan tidak dapat dibaca: %2",
+		"error.save_not_put_back": "%1 dari data simpanan tidak dapat dikembalikan.",
+		"error.save_not_zip": "Data simpanan bukan zip: %1",
+		"error.settings_not_json": "Pengaturan bukan JSON: %1",
+		"error.settings_not_object": "Pengaturan bukan objek JSON.",
+		"error.storage": "Penyimpanan konsol tidak dapat dibuat: %1",
+		"setting.pads": "Pengontrol",
+		"setting.pads.about": "Berapa banyak pengontrol yang terpasang. Konsol memiliki dua port. Ini bagian dari mesin: game diberi tahu berapa banyak pengontrol yang ada, dan rekaman hanya memiliki kolom untuk jumlah itu.",
+		"setting.rtc_start": "Jam Saat Dinyalakan",
+		"setting.rtc_start.about": "Tanggal dan waktu yang ditampilkan jam konsol ketika game dimulai, dalam detik sejak 1970. Misalnya 1262304000 adalah 1 Januari 2010, pada masa Zeebo dijual. Tidak boleh lebih awal dari 6 Januari 1980, tanggal yang dihitung sistem konsol. Setelah dimulai, jam berjalan bersama game dan tidak pernah bersama komputer Anda. Ini bagian dari mesin: game yang memilih angka acaknya dari waktu akan berjalan berbeda dengan tanggal lain.",
+		"slot.game": "Game",
+		"slot.game.help": "Game seperti yang didump dari konsol: arsip .7z atau .zip dengan folder 'mif' dan folder 'mod' di dalamnya, atau file .mod game. Daftar kompatibilitas Zeebx (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) menyebutkan game mana yang berjalan.",
+		"slot.savedata": "Data simpanan",
+		"slot.savedata.help": "Apa yang sudah disimpan game, seperti yang ditulis Emulator > Ekspor Data Simpanan... Ini berupa .zip dari folder simpanan konsol, dan dikembalikan sebelum game dimulai."
+	}
+}

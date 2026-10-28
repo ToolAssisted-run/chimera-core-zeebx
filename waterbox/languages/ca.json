@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "Els comandaments són %1, i han de ser 1 o 2.",
+		"error.bad_rtc": "L'inici del rellotge, %1, no és una hora a partir de l'1980-01-06.",
+		"error.no_button": "Zeebx no té cap botó anomenat %1.",
+		"error.no_file": "No hi ha cap fitxer de joc al projecte.",
+		"error.no_storage": "No s'ha pogut crear l'emmagatzematge de la consola.",
+		"error.not_opened": "No s'ha pogut obrir '%1'.",
+		"error.not_package": "'%1' no és un fitxer .7z, .zip o .mod. Aquest nucli executa jocs de Zeebo empaquetats d'aquesta manera.",
+		"error.not_read": "No s'ha pogut llegir %1: %2",
+		"error.not_started": "El joc no s'ha iniciat: %1",
+		"error.save_bad_path": "Les dades desades contenen %1, que no és una ruta dins de la carpeta de desats.",
+		"error.save_entry": "No s'ha pogut llegir %1 de les dades desades: %2",
+		"error.save_not_put_back": "No s'ha pogut tornar a posar %1 de les dades desades.",
+		"error.save_not_zip": "Les dades desades no són un zip: %1",
+		"error.settings_not_json": "La configuració no és JSON: %1",
+		"error.settings_not_object": "La configuració no és un objecte JSON.",
+		"error.storage": "No s'ha pogut crear l'emmagatzematge de la consola: %1",
+		"setting.pads": "Comandaments",
+		"setting.pads.about": "Quants comandaments hi ha connectats. La consola té dos ports. Forma part de la màquina: se li diu a un joc quants n'hi ha, i una pel·lícula només té columnes per a aquests.",
+		"setting.rtc_start": "Rellotge en encendre",
+		"setting.rtc_start.about": "La data i hora que mostra el rellotge de la consola quan comença el joc, en segons des de 1970. Per exemple 1262304000 és el 2010-01-01, en els anys en què es va vendre el Zeebo. No pot ser anterior a l'1980-01-06, que és la data des de la qual compta el sistema de la consola. Després de l'inici el rellotge va amb el joc i mai amb el vostre ordinador. Forma part de la màquina: un joc que tria els seus nombres aleatoris a partir de l'hora es comporta diferent amb una altra data.",
+		"slot.game": "Joc",
+		"slot.game.help": "El joc tal com es va bolcar d'una consola: un arxiu .7z o .zip amb una carpeta 'mif' i una carpeta 'mod' dins, o el fitxer .mod del joc. La llista de compatibilitat de Zeebx (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) indica quins jocs funcionen.",
+		"slot.savedata": "Dades desades",
+		"slot.savedata.help": "Tot el que el joc ja havia desat, tal com ho va escriure Emulador > Exporta les dades desades... És un .zip de la carpeta de desats de la consola, i es torna a posar abans que comenci el joc."
+	}
+}

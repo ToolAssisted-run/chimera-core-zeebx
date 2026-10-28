@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "Kumanda sayısı %1; 1 ya da 2 olmalı.",
+		"error.bad_rtc": "Saatin başlangıcı, %1, 1980-01-06 ve sonrası bir zaman değil.",
+		"error.no_button": "Zeebx'in %1 adlı bir düğmesi yok.",
+		"error.no_file": "Projede oyun dosyası yok.",
+		"error.no_storage": "Konsolun depolama alanı oluşturulamadı.",
+		"error.not_opened": "'%1' açılamadı.",
+		"error.not_package": "'%1' bir .7z, .zip ya da .mod dosyası değil. Bu çekirdek o biçimde paketlenmiş Zeebo oyunlarını çalıştırır.",
+		"error.not_read": "%1 okunamadı: %2",
+		"error.not_started": "Oyun başlamadı: %1",
+		"error.save_bad_path": "Kayıt verisi, kayıt klasörünün dışında bir yol olan %1 içeriyor.",
+		"error.save_entry": "Kayıt verisinin %1 girdisi okunamadı: %2",
+		"error.save_not_put_back": "Kayıt verisinin %1 girdisi geri konamadı.",
+		"error.save_not_zip": "Kayıt verisi bir zip değil: %1",
+		"error.settings_not_json": "Ayarlar JSON değil: %1",
+		"error.settings_not_object": "Ayarlar bir JSON nesnesi değil.",
+		"error.storage": "Konsolun depolama alanı oluşturulamadı: %1",
+		"setting.pads": "Kumandalar",
+		"setting.pads.about": "Kaç kumandanın takılı olduğu. Konsolun iki portu vardır. Makinenin bir parçasıdır: bir oyuna kaç kumanda olduğu söylenir ve bir film yalnızca onlar için sütunlara sahiptir.",
+		"setting.rtc_start": "Açılışta Saat",
+		"setting.rtc_start.about": "Oyun başladığında konsolun saatinin gösterdiği tarih ve saat, 1970'ten itibaren saniye olarak. Örneğin 1262304000, Zeebo'nun satıldığı yıllardan 2010-01-01'dir. 1980-01-06'dan önce olamaz; konsolun sistemi bu tarihten sayar. Başladıktan sonra saat, bilgisayarınızla değil oyunla birlikte çalışır. Makinenin bir parçasıdır: rastgele sayılarını zamandan alan bir oyun, başka bir tarihle farklı oynar.",
+		"slot.game": "Oyun",
+		"slot.game.help": "Oyun, konsoldan dökülmüş haliyle: içinde 'mif' ve 'mod' klasörleri olan bir .7z ya da .zip arşivi, ya da oyunun .mod dosyası. Zeebx'in uyumluluk listesi (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) hangi oyunların çalıştığını söyler.",
+		"slot.savedata": "Kayıt verisi",
+		"slot.savedata.help": "Oyunun önceden kaydettikleri, Emulator > Export Save Data... ile yazıldığı şekliyle. Konsolun kayıt klasörünün bir .zip'idir ve oyun başlamadan önce geri konur."
+	}
+}

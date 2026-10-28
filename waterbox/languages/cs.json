@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "Ovladače je %1, a musí být 1 nebo 2.",
+		"error.bad_rtc": "Začátek hodin, %1, není čas od 6. 1. 1980 dál.",
+		"error.no_button": "Zeebx nemá tlačítko nazvané %1.",
+		"error.no_file": "V projektu není soubor hry.",
+		"error.no_storage": "Úložiště konzole se nepodařilo vytvořit.",
+		"error.not_opened": "„%1“ se nepodařilo otevřít.",
+		"error.not_package": "„%1“ není soubor .7z, .zip ani .mod. Toto jádro spouští hry Zeebo zabalené tímto způsobem.",
+		"error.not_read": "%1 se nepodařilo přečíst: %2",
+		"error.not_started": "Hra se nespustila: %1",
+		"error.save_bad_path": "Uložená data obsahují %1, což není cesta uvnitř složky uložení.",
+		"error.save_entry": "%1 z uložených dat se nepodařilo přečíst: %2",
+		"error.save_not_put_back": "%1 z uložených dat se nepodařilo vrátit zpět.",
+		"error.save_not_zip": "Uložená data nejsou zip: %1",
+		"error.settings_not_json": "Nastavení nejsou JSON: %1",
+		"error.settings_not_object": "Nastavení nejsou objekt JSON.",
+		"error.storage": "Úložiště konzole se nepodařilo vytvořit: %1",
+		"setting.pads": "Ovladače",
+		"setting.pads.about": "Kolik ovladačů je připojeno. Konzole má dva porty. Je součástí stroje: hra je informována, kolik jich je, a film má sloupce jen pro ně.",
+		"setting.rtc_start": "Hodiny při zapnutí",
+		"setting.rtc_start.about": "Datum a čas, které hodiny konzole ukazují, když hra začne, v sekundách od roku 1970. Například 1262304000 je 1. 1. 2010, v letech, kdy se Zeebo prodávalo. Nesmí být dřív než 6. 1. 1980, od kterého systém konzole počítá. Po startu hodiny běží s hrou, nikdy s tvým počítačem. Je součástí stroje: hra, která bere své náhodné číslo z času, se s jiným datem hraje jinak.",
+		"slot.game": "Hra",
+		"slot.game.help": "Hra tak, jak byla vyčtena z konzole: archiv .7z nebo .zip se složkou „mif“ a složkou „mod“, nebo soubor hry .mod. Seznam kompatibility Zeebx (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) říká, které hry fungují.",
+		"slot.savedata": "Uložená data",
+		"slot.savedata.help": "Co už hra uložila, tak jak to zapsal Emulator > Export Save Data... Je to .zip složky saves konzole a před spuštěním hry se vrátí zpět."
+	}
+}

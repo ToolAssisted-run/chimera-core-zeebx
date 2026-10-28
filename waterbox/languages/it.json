@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "Pad è %1, e deve essere 1 o 2.",
+		"error.bad_rtc": "L'inizio dell'orologio, %1, non è un'ora dal 1980-01-06 in poi.",
+		"error.no_button": "Zeebx non ha un tasto chiamato %1.",
+		"error.no_file": "Nel progetto non c'è nessun file di gioco.",
+		"error.no_storage": "Non è stato possibile creare la memoria della console.",
+		"error.not_opened": "'%1' non è stato possibile aprirlo.",
+		"error.not_package": "'%1' non è un file .7z, .zip o .mod. Questo core fa girare i giochi Zeebo impacchettati così.",
+		"error.not_read": "%1 non è stato possibile leggerlo: %2",
+		"error.not_started": "Il gioco non è partito: %1",
+		"error.save_bad_path": "I dati di salvataggio contengono %1, che non è un percorso dentro la cartella dei salvataggi.",
+		"error.save_entry": "Non è stato possibile leggere %1 dei dati di salvataggio: %2",
+		"error.save_not_put_back": "Non è stato possibile rimettere %1 dei dati di salvataggio.",
+		"error.save_not_zip": "I dati di salvataggio non sono uno zip: %1",
+		"error.settings_not_json": "Le impostazioni non sono JSON: %1",
+		"error.settings_not_object": "Le impostazioni non sono un oggetto JSON.",
+		"error.storage": "Non è stato possibile creare la memoria della console: %1",
+		"setting.pads": "Controller",
+		"setting.pads.about": "Quanti controller sono collegati. La console ha due porte. Fa parte della macchina: a un gioco viene detto quanti ce ne sono, e un filmato ha colonne solo per quelli.",
+		"setting.rtc_start": "Ora all'accensione",
+		"setting.rtc_start.about": "La data e l'ora che l'orologio della console mostra quando il gioco parte, in secondi dal 1970. Per esempio 1262304000 è il 2010-01-01, negli anni in cui lo Zeebo era in vendita. Non può essere anteriore al 1980-01-06, la data da cui conta il sistema della console. Dopo l'avvio l'orologio va con il gioco e mai con il tuo computer. Fa parte della macchina: un gioco che prende i numeri casuali dall'ora si comporta diversamente con un'altra data.",
+		"slot.game": "Gioco",
+		"slot.game.help": "Il gioco così come è stato estratto dalla console: un archivio .7z o .zip con dentro una cartella 'mif' e una cartella 'mod', oppure il file .mod del gioco. La lista di compatibilità di Zeebx (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) dice quali giochi funzionano.",
+		"slot.savedata": "Dati di salvataggio",
+		"slot.savedata.help": "Ciò che il gioco aveva già salvato, come lo ha scritto Emulatore > Esporta dati di salvataggio... È uno .zip della cartella dei salvataggi della console, e viene rimesso prima che il gioco parta."
+	}
+}

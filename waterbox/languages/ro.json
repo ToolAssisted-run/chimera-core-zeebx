@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "Controalele sunt %1, și trebuie să fie 1 sau 2.",
+		"error.bad_rtc": "Pornirea ceasului, %1, nu este o oră de la 6 ianuarie 1980 încoace.",
+		"error.no_button": "Zeebx nu are un buton numit %1.",
+		"error.no_file": "Niciun fișier de joc nu este în proiect.",
+		"error.no_storage": "Spațiul de stocare al consolei nu a putut fi creat.",
+		"error.not_opened": "„%1” nu s-a putut deschide.",
+		"error.not_package": "„%1” nu este un fișier .7z, .zip sau .mod. Acest nucleu rulează jocuri Zeebo împachetate astfel.",
+		"error.not_read": "%1 nu a putut fi citit: %2",
+		"error.not_started": "Jocul nu a pornit: %1",
+		"error.save_bad_path": "Datele salvate conțin %1, care nu este o cale în dosarul de salvări.",
+		"error.save_entry": "%1 din datele salvate nu a putut fi citit: %2",
+		"error.save_not_put_back": "%1 din datele salvate nu a putut fi pus înapoi.",
+		"error.save_not_zip": "Datele salvate nu sunt o arhivă zip: %1",
+		"error.settings_not_json": "Setările nu sunt JSON: %1",
+		"error.settings_not_object": "Setările nu sunt un obiect JSON.",
+		"error.storage": "Spațiul de stocare al consolei nu a putut fi creat: %1",
+		"setting.pads": "Controlere",
+		"setting.pads.about": "Câte controlere sunt conectate. Consola are două porturi. Face parte din mașină: un joc este anunțat câte sunt, iar o înregistrare are coloane doar pentru acestea.",
+		"setting.rtc_start": "Ceasul la pornire",
+		"setting.rtc_start.about": "Data și ora pe care le arată ceasul consolei când pornește jocul, în secunde de la 1970. De exemplu 1262304000 este 1 ianuarie 2010, în anii în care s-a vândut Zeebo. Nu poate fi mai devreme de 6 ianuarie 1980, data de la care numără sistemul consolei. După pornire, ceasul merge cu jocul și niciodată cu calculatorul tău. Face parte din mașină: un joc care își alege numerele aleatoare din oră se joacă diferit cu altă dată.",
+		"slot.game": "Joc",
+		"slot.game.help": "Jocul așa cum a fost extras de pe o consolă: o arhivă .7z sau .zip cu un dosar „mif” și un dosar „mod” în ea, sau fișierul .mod al jocului. Lista de compatibilitate a Zeebx (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) spune care jocuri merg.",
+		"slot.savedata": "Date salvate",
+		"slot.savedata.help": "Ce a salvat deja jocul, așa cum l-a scris Emulator > Export Save Data.... Este o arhivă .zip a dosarului de salvări al consolei și este pusă înapoi înainte să pornească jocul."
+	}
+}

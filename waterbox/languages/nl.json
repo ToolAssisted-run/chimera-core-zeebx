@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "Controllers is %1, en moet 1 of 2 zijn.",
+		"error.bad_rtc": "De start van de klok, %1, is geen tijd vanaf 1980-01-06.",
+		"error.no_button": "Zeebx heeft geen knop die %1 heet.",
+		"error.no_file": "Er staat geen spelbestand in het project.",
+		"error.no_storage": "De opslag van de console kon niet worden gemaakt.",
+		"error.not_opened": "'%1' kon niet worden geopend.",
+		"error.not_package": "'%1' is geen .7z-, .zip- of .mod-bestand. Deze core draait Zeebo-spellen die op die manier zijn ingepakt.",
+		"error.not_read": "%1 kon niet worden gelezen: %2",
+		"error.not_started": "Het spel is niet gestart: %1",
+		"error.save_bad_path": "De opgeslagen gegevens bevatten %1, dat geen pad binnen de map met opslagen is.",
+		"error.save_entry": "De %1 uit de opgeslagen gegevens kon niet worden gelezen: %2",
+		"error.save_not_put_back": "De %1 uit de opgeslagen gegevens kon niet worden teruggezet.",
+		"error.save_not_zip": "De opgeslagen gegevens zijn geen zip: %1",
+		"error.settings_not_json": "De instellingen zijn geen JSON: %1",
+		"error.settings_not_object": "De instellingen zijn geen JSON-object.",
+		"error.storage": "De opslag van de console kon niet worden gemaakt: %1",
+		"setting.pads": "Controllers",
+		"setting.pads.about": "Hoeveel controllers er zijn aangesloten. De console heeft twee poorten. Het hoort bij de machine: een spel krijgt te horen hoeveel er zijn, en een movie heeft alleen kolommen voor die.",
+		"setting.rtc_start": "Klok bij het aanzetten",
+		"setting.rtc_start.about": "De datum en tijd die de klok van de console toont wanneer het spel start, in seconden sinds 1970. 1262304000 is bijvoorbeeld 2010-01-01, in de jaren dat de Zeebo werd verkocht. Het kan niet eerder zijn dan 1980-01-06, de datum waar het systeem van de console vanaf telt. Na de start loopt de klok mee met het spel en nooit met je computer. Het hoort bij de machine: een spel dat zijn willekeurige getallen uit de tijd haalt, speelt anders met een andere datum.",
+		"slot.game": "Spel",
+		"slot.game.help": "Het spel zoals het van een console is afgetapt: een .7z- of .zip-archief met een map 'mif' en een map 'mod' erin, of het .mod-bestand van het spel. De compatibiliteitslijst van Zeebx (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) zegt welke spellen werken.",
+		"slot.savedata": "Opgeslagen gegevens",
+		"slot.savedata.help": "Wat het spel al had opgeslagen, zoals Emulator > Export Save Data... het schreef. Het is een .zip van de map met opslagen van de console, en het wordt teruggezet voordat het spel start."
+	}
+}

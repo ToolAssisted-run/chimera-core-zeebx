@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "手把數量為 %1,必須是 1 或 2。",
+		"error.bad_rtc": "時鐘的起始時間 %1 不是 1980-01-06 之後的時間。",
+		"error.no_button": "Zeebx 沒有名為 %1 的按鈕。",
+		"error.no_file": "專案中沒有遊戲檔案。",
+		"error.no_storage": "無法建立主機的儲存空間。",
+		"error.not_opened": "無法開啟「%1」。",
+		"error.not_package": "「%1」不是 .7z、.zip 或 .mod 檔。本核心執行的 Zeebo 遊戲是以這些格式打包的。",
+		"error.not_read": "無法讀取 %1:%2",
+		"error.not_started": "遊戲沒有啟動:%1",
+		"error.save_bad_path": "存檔資料含有 %1,它不是存檔資料夾內的路徑。",
+		"error.save_entry": "存檔資料中的 %1 無法讀取:%2",
+		"error.save_not_put_back": "存檔資料中的 %1 無法放回。",
+		"error.save_not_zip": "存檔資料不是 zip:%1",
+		"error.settings_not_json": "設定不是 JSON:%1",
+		"error.settings_not_object": "設定不是 JSON 物件。",
+		"error.storage": "無法建立主機的儲存空間:%1",
+		"setting.pads": "手把",
+		"setting.pads.about": "插上多少個手把。主機有兩個連接埠。它屬於機器的一部分:遊戲會被告知有幾個手把,而錄影只有這些手把的欄位。",
+		"setting.rtc_start": "開機時的時鐘",
+		"setting.rtc_start.about": "遊戲開始時主機時鐘顯示的日期與時間,以 1970 年起的秒數計。例如 1262304000 是 2010-01-01,即 Zeebo 販售的年代。不能早於 1980-01-06,那是主機系統計算的起點。開始後,時鐘隨遊戲運行,而不是隨你的電腦運行。它屬於機器的一部分:以時間決定亂數的遊戲,在另一個日期下會有不同的表現。",
+		"slot.game": "遊戲",
+		"slot.game.help": "從主機傾印出來的遊戲:一個 .7z 或 .zip 壓縮檔,其中有 'mif' 資料夾和 'mod' 資料夾,或遊戲的 .mod 檔。Zeebx 的相容性清單(github.com/ZeebxTeam/zeebx-emu,COMPATIBILIDADE.md)列出哪些遊戲可以運作。",
+		"slot.savedata": "存檔",
+		"slot.savedata.help": "遊戲已保存的內容,即「模擬器 > 匯出存檔資料...」寫出的。它是主機存檔資料夾的 .zip,會在遊戲開始前放回。"
+	}
+}

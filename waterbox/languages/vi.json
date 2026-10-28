@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "Pads là %1, phải là 1 hoặc 2.",
+		"error.bad_rtc": "Thời điểm bắt đầu của đồng hồ, %1, không phải là một thời gian từ 1980-01-06 trở đi.",
+		"error.no_button": "Zeebx không có nút nào tên là %1.",
+		"error.no_file": "Không có tệp trò chơi nào trong dự án.",
+		"error.no_storage": "Không thể tạo bộ nhớ của máy chơi game.",
+		"error.not_opened": "Không mở được \"%1\".",
+		"error.not_package": "\"%1\" không phải là tệp .7z, .zip hay .mod. Lõi này chạy các trò chơi Zeebo được đóng gói kiểu đó.",
+		"error.not_read": "Không đọc được %1: %2",
+		"error.not_started": "Trò chơi không khởi động: %1",
+		"error.save_bad_path": "Dữ liệu lưu chứa %1, không phải là đường dẫn bên trong thư mục saves.",
+		"error.save_entry": "Không đọc được %1 của dữ liệu lưu: %2",
+		"error.save_not_put_back": "Không đặt lại được %1 của dữ liệu lưu.",
+		"error.save_not_zip": "Dữ liệu lưu không phải là tệp zip: %1",
+		"error.settings_not_json": "Các thiết lập không phải JSON: %1",
+		"error.settings_not_object": "Các thiết lập không phải là một đối tượng JSON.",
+		"error.storage": "Không thể tạo bộ nhớ của máy chơi game: %1",
+		"setting.pads": "Tay cầm",
+		"setting.pads.about": "Số tay cầm được cắm vào. Máy chơi game có hai cổng. Đây là một phần của máy: trò chơi được cho biết có bao nhiêu cổng, và một bản ghi chỉ có cột cho những cổng đó.",
+		"setting.rtc_start": "Đồng hồ khi bật máy",
+		"setting.rtc_start.about": "Ngày và giờ mà đồng hồ của máy chơi game hiển thị khi trò chơi bắt đầu, tính bằng giây từ năm 1970. Ví dụ 1262304000 là 2010-01-01, trong những năm máy Zeebo được bán. Không thể sớm hơn 1980-01-06, là ngày mà hệ thống của máy chơi game đếm từ đó. Sau khi bắt đầu, đồng hồ chạy cùng trò chơi và không bao giờ chạy theo máy tính của bạn. Đây là một phần của máy: một trò chơi lấy số ngẫu nhiên từ thời gian sẽ chơi khác đi với một ngày khác.",
+		"slot.game": "Trò chơi",
+		"slot.game.help": "Trò chơi như đã được trích ra từ máy chơi game: một tệp nén .7z hoặc .zip có thư mục 'mif' và thư mục 'mod' bên trong, hoặc tệp .mod của trò chơi. Danh sách tương thích của Zeebx (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) cho biết trò chơi nào chạy được.",
+		"slot.savedata": "Lần lưu",
+		"slot.savedata.help": "Những gì trò chơi đã lưu, như Emulator > Export Save Data... đã ghi. Đó là một tệp .zip của thư mục saves của máy chơi game, và được đặt lại trước khi trò chơi bắt đầu."
+	}
+}

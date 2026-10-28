@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "Ohjaimia on %1, ja niitä on oltava 1 tai 2.",
+		"error.bad_rtc": "Kellon alkuaika %1 ei ole aika 1980-01-06 jälkeen.",
+		"error.no_button": "Zeebxissä ei ole painiketta nimeltä %1.",
+		"error.no_file": "Projektissa ei ole pelitiedostoa.",
+		"error.no_storage": "Konsolin tallennustilaa ei voitu luoda.",
+		"error.not_opened": "'%1' ei voitu avata.",
+		"error.not_package": "'%1' ei ole .7z-, .zip- eikä .mod-tiedosto. Tämä ydin ajaa Zeebo-pelejä, jotka on paketoitu näin.",
+		"error.not_read": "%1 ei voitu lukea: %2",
+		"error.not_started": "Peli ei käynnistynyt: %1",
+		"error.save_bad_path": "Tallennustiedot sisältävät kohteen %1, joka ei ole polku tallennuskansion sisällä.",
+		"error.save_entry": "Tallennustietojen kohdetta %1 ei voitu lukea: %2",
+		"error.save_not_put_back": "Tallennustietojen kohdetta %1 ei voitu palauttaa.",
+		"error.save_not_zip": "Tallennustiedot eivät ole zip-tiedosto: %1",
+		"error.settings_not_json": "Asetukset eivät ole JSONia: %1",
+		"error.settings_not_object": "Asetukset eivät ole JSON-olio.",
+		"error.storage": "Konsolin tallennustilaa ei voitu luoda: %1",
+		"setting.pads": "Ohjaimet",
+		"setting.pads.about": "Kuinka monta ohjainta on kytketty. Konsolissa on kaksi porttia. Tämä kuuluu koneeseen: peli saa tiedon niiden määrästä, ja tallenteessa on sarakkeet vain niille.",
+		"setting.rtc_start": "Kello käynnistyksessä",
+		"setting.rtc_start.about": "Päivä ja kellonaika, jonka konsolin kello näyttää pelin alkaessa, sekunteina vuodesta 1970 alkaen. Esimerkiksi 1262304000 on 2010-01-01, Zeebon myyntivuosina. Se ei voi olla ennen 1980-01-06, päivää, josta konsolin järjestelmä laskee. Käynnistyksen jälkeen kello kulkee pelin mukana, ei koskaan tietokoneesi mukana. Tämä kuuluu koneeseen: peli, joka valitsee satunnaislukunsa ajasta, toimii eri tavalla toisella päivämäärällä.",
+		"slot.game": "Peli",
+		"slot.game.help": "Peli sellaisena kuin se on tallennettu konsolilta: .7z- tai .zip-arkisto, jossa on kansiot 'mif' ja 'mod', tai pelin .mod-tiedosto. Zeebxin yhteensopivuusluettelo (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) kertoo, mitkä pelit toimivat.",
+		"slot.savedata": "Tallennustiedot",
+		"slot.savedata.help": "Se, minkä peli oli jo tallentanut, sellaisena kuin Emulaattori > Vie tallennustiedot... kirjoitti sen. Se on zip-tiedosto konsolin tallennuskansiosta, ja se palautetaan ennen pelin alkua."
+	}
+}

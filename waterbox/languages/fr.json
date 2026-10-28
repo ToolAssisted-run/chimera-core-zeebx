@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "Les manettes valent %1, et doivent être 1 ou 2.",
+		"error.bad_rtc": "Le début de l'horloge, %1, n'est pas une heure à partir du 1980-01-06.",
+		"error.no_button": "Zeebx n'a aucun bouton nommé %1.",
+		"error.no_file": "Aucun fichier de jeu n'est dans le projet.",
+		"error.no_storage": "Le stockage de la console n'a pas pu être créé.",
+		"error.not_opened": "'%1' n'a pas pu être ouvert.",
+		"error.not_package": "'%1' n'est pas un fichier .7z, .zip ou .mod. Ce cœur fait tourner les jeux Zeebo empaquetés de cette façon.",
+		"error.not_read": "%1 n'a pas pu être lu : %2",
+		"error.not_started": "Le jeu n'a pas démarré : %1",
+		"error.save_bad_path": "Les données de sauvegarde contiennent %1, qui n'est pas un chemin dans le dossier des sauvegardes.",
+		"error.save_entry": "L'élément %1 des données de sauvegarde n'a pas pu être lu : %2",
+		"error.save_not_put_back": "L'élément %1 des données de sauvegarde n'a pas pu être remis en place.",
+		"error.save_not_zip": "Les données de sauvegarde ne sont pas un zip : %1",
+		"error.settings_not_json": "Les réglages ne sont pas du JSON : %1",
+		"error.settings_not_object": "Les réglages ne sont pas un objet JSON.",
+		"error.storage": "Le stockage de la console n'a pas pu être créé : %1",
+		"setting.pads": "Manettes",
+		"setting.pads.about": "Combien de manettes sont branchées. La console a deux ports. Cela fait partie de la machine : un jeu est informé de leur nombre, et un film n'a de colonnes que pour celles-là.",
+		"setting.rtc_start": "Horloge à la mise sous tension",
+		"setting.rtc_start.about": "La date et l'heure qu'affiche l'horloge de la console au démarrage du jeu, en secondes depuis 1970. Par exemple 1262304000 correspond au 1er janvier 2010, à l'époque où la Zeebo était vendue. Elle ne peut pas être antérieure au 6 janvier 1980, date à partir de laquelle compte le système de la console. Après le démarrage, l'horloge suit le jeu, et jamais l'horloge de votre ordinateur. Elle fait partie de la machine : un jeu qui tire ses nombres aléatoires de l'heure se joue autrement avec une autre date.",
+		"slot.game": "Jeu",
+		"slot.game.help": "Le jeu tel qu'il a été extrait d'une console : une archive .7z ou .zip contenant un dossier « mif » et un dossier « mod », ou le fichier .mod du jeu. La liste de compatibilité de Zeebx (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) indique quels jeux fonctionnent.",
+		"slot.savedata": "Données de sauvegarde",
+		"slot.savedata.help": "Ce que le jeu a déjà sauvegardé, tel que l'a écrit Émulateur > Exporter les données de sauvegarde... C'est un .zip du dossier des sauvegardes de la console, et il est remis en place avant le démarrage du jeu."
+	}
+}

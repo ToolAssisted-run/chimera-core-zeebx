@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "Pady to %1, a muszą być 1 lub 2.",
+		"error.bad_rtc": "Start zegara, %1, nie jest czasem od 1980-01-06 wzwyż.",
+		"error.no_button": "Zeebx nie ma przycisku o nazwie %1.",
+		"error.no_file": "W projekcie nie ma pliku gry.",
+		"error.no_storage": "Nie udało się utworzyć pamięci konsoli.",
+		"error.not_opened": "'%1' nie udało się otworzyć.",
+		"error.not_package": "'%1' nie jest plikiem .7z, .zip ani .mod. Ten rdzeń uruchamia gry Zeebo spakowane w ten sposób.",
+		"error.not_read": "%1 nie udało się odczytać: %2",
+		"error.not_started": "Gra się nie uruchomiła: %1",
+		"error.save_bad_path": "Zapis gry zawiera %1, co nie jest ścieżką w folderze zapisów.",
+		"error.save_entry": "Nie udało się odczytać %1 z zapisu gry: %2",
+		"error.save_not_put_back": "Nie udało się przywrócić %1 z zapisu gry.",
+		"error.save_not_zip": "Zapis gry nie jest zipem: %1",
+		"error.settings_not_json": "Ustawienia nie są w JSON: %1",
+		"error.settings_not_object": "Ustawienia nie są obiektem JSON.",
+		"error.storage": "Nie udało się utworzyć pamięci konsoli: %1",
+		"setting.pads": "Kontrolery",
+		"setting.pads.about": "Ile kontrolerów jest podłączonych. Konsola ma dwa porty. Jest częścią maszyny: grze mówi się, ile ich jest, a nagranie ma kolumny tylko dla nich.",
+		"setting.rtc_start": "Zegar przy włączeniu",
+		"setting.rtc_start.about": "Data i godzina, które pokazuje zegar konsoli w chwili startu gry, w sekundach od 1970. Na przykład 1262304000 to 2010-01-01, w latach, w których sprzedawano Zeebo. Nie może być wcześniej niż 1980-01-06, od której liczy system konsoli. Po starcie zegar biegnie z grą, nigdy z twoim komputerem. Jest częścią maszyny: gra, która losuje liczby z czasu, zachowuje się inaczej przy innej dacie.",
+		"slot.game": "Gra",
+		"slot.game.help": "Gra zgrana z konsoli: archiwum .7z lub .zip z folderem 'mif' i folderem 'mod' w środku albo plik .mod gry. Lista zgodności Zeebx (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) mówi, które gry działają.",
+		"slot.savedata": "Zapis gry",
+		"slot.savedata.help": "To, co gra już zapisała, tak jak zapisał to Emulator > Export Save Data... To .zip folderu zapisów konsoli; jest przywracany przed startem gry."
+	}
+}

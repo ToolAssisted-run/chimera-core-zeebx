@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "컨트롤러 수가 %1인데, 1 또는 2여야 합니다.",
+		"error.bad_rtc": "시계의 시작 시각 %1은(는) 1980-01-06 이후의 시각이 아닙니다.",
+		"error.no_button": "Zeebx에는 이름이 %1인 버튼이 없습니다.",
+		"error.no_file": "프로젝트에 게임 파일이 없습니다.",
+		"error.no_storage": "콘솔의 저장소를 만들 수 없습니다.",
+		"error.not_opened": "'%1'을(를) 열 수 없습니다.",
+		"error.not_package": "'%1'은(는) .7z, .zip 또는 .mod 파일이 아닙니다. 이 코어는 그런 방식으로 묶인 Zeebo 게임을 실행합니다.",
+		"error.not_read": "%1을(를) 읽을 수 없습니다: %2",
+		"error.not_started": "게임이 시작되지 않았습니다: %1",
+		"error.save_bad_path": "저장 데이터에 있는 %1은(는) saves 폴더 안의 경로가 아닙니다.",
+		"error.save_entry": "저장 데이터의 %1을(를) 읽을 수 없습니다: %2",
+		"error.save_not_put_back": "저장 데이터의 %1을(를) 다시 넣을 수 없습니다.",
+		"error.save_not_zip": "저장 데이터가 zip이 아닙니다: %1",
+		"error.settings_not_json": "설정이 JSON이 아닙니다: %1",
+		"error.settings_not_object": "설정이 JSON 객체가 아닙니다.",
+		"error.storage": "콘솔의 저장소를 만들 수 없습니다: %1",
+		"setting.pads": "컨트롤러",
+		"setting.pads.about": "꽂혀 있는 컨트롤러 수입니다. 콘솔에는 포트가 두 개 있습니다. 이것은 머신의 일부입니다. 게임에는 컨트롤러가 몇 개인지 알려지며, 무비에는 그만큼의 열만 있습니다.",
+		"setting.rtc_start": "전원을 켤 때의 시계",
+		"setting.rtc_start.about": "게임이 시작할 때 콘솔 시계가 보여 주는 날짜와 시각입니다. 1970년 이후 지난 초로 적습니다. 예를 들어 1262304000은 2010-01-01이며, Zeebo가 팔리던 시기입니다. 1980-01-06보다 이를 수는 없는데, 이는 콘솔 시스템이 세는 기준 날짜입니다. 시작한 뒤에는 시계가 게임과 함께 돌며, 컴퓨터의 시계와는 함께 돌지 않습니다. 이것은 머신의 일부입니다. 시각에서 난수를 고르는 게임은 날짜가 다르면 다르게 돌아갑니다.",
+		"slot.game": "게임",
+		"slot.game.help": "콘솔에서 덤프된 그대로의 게임입니다. 'mif' 폴더와 'mod' 폴더가 들어 있는 .7z 또는 .zip 압축 파일이거나, 게임의 .mod 파일입니다. Zeebx의 호환성 목록(github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md)에 어떤 게임이 되는지 나와 있습니다.",
+		"slot.savedata": "저장 데이터",
+		"slot.savedata.help": "게임이 이미 저장해 둔 것으로, 에뮬레이터 > 저장 데이터 내보내기...가 쓴 파일입니다. 콘솔의 saves 폴더를 담은 .zip이며, 게임이 시작되기 전에 다시 넣습니다."
+	}
+}

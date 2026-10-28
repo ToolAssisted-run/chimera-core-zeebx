@@ -1,0 +1,28 @@
+{
+	"texts": {
+		"error.bad_pads": "Pads er %1, og skal være 1 eller 2.",
+		"error.bad_rtc": "Urets start, %1, er ikke et tidspunkt fra 1980-01-06 og frem.",
+		"error.no_button": "Zeebx har ingen knap ved navn %1.",
+		"error.no_file": "Der er ingen spilfil i projektet.",
+		"error.no_storage": "Konsollens lager kunne ikke oprettes.",
+		"error.not_opened": "'%1' kunne ikke åbnes.",
+		"error.not_package": "'%1' er ikke en .7z-, .zip- eller .mod-fil. Denne core kører Zeebo-spil pakket på den måde.",
+		"error.not_read": "%1 kunne ikke læses: %2",
+		"error.not_started": "Spillet startede ikke: %1",
+		"error.save_bad_path": "De gemte data indeholder %1, som ikke er en sti inde i mappen for gemte spil.",
+		"error.save_entry": "De gemte datas %1 kunne ikke læses: %2",
+		"error.save_not_put_back": "De gemte datas %1 kunne ikke lægges tilbage.",
+		"error.save_not_zip": "De gemte data er ikke en zip-fil: %1",
+		"error.settings_not_json": "Indstillingerne er ikke JSON: %1",
+		"error.settings_not_object": "Indstillingerne er ikke et JSON-objekt.",
+		"error.storage": "Konsollens lager kunne ikke oprettes: %1",
+		"setting.pads": "Controllere",
+		"setting.pads.about": "Hvor mange controllere der er tilsluttet. Konsollen har to porte. Den hører til maskinen: et spil får at vide, hvor mange der er, og en optagelse har kun kolonner for dem.",
+		"setting.rtc_start": "Ur ved tænding",
+		"setting.rtc_start.about": "Datoen og tiden, konsollens ur viser, når spillet starter, i sekunder siden 1970. For eksempel er 1262304000 2010-01-01, i de år Zeebo blev solgt. Den kan ikke være tidligere end 1980-01-06, den dato konsollens system tæller fra. Efter starten kører uret med spillet og aldrig med din computer. Den hører til maskinen: et spil, der vælger sine tilfældige tal ud fra tiden, spiller anderledes med en anden dato.",
+		"slot.game": "Spil",
+		"slot.game.help": "Spillet, sådan som det blev kopieret fra en konsol: et .7z- eller .zip-arkiv med en mappe 'mif' og en mappe 'mod' i sig, eller spillets .mod-fil. Zeebx' kompatibilitetsliste (github.com/ZeebxTeam/zeebx-emu, COMPATIBILIDADE.md) siger, hvilke spil der virker.",
+		"slot.savedata": "Gemte data",
+		"slot.savedata.help": "Det spillet allerede har gemt, sådan som Emulator > Eksportér gemte data... skrev det. Det er en .zip af konsollens mappe for gemte spil, og den lægges tilbage, før spillet starter."
+	}
+}
