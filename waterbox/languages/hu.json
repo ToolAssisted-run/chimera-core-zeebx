@@ -2,7 +2,7 @@
 	"texts": {
 		"error.bad_pads": "A Kontrollerek értéke %1, pedig 1 vagy 2 lehet.",
 		"error.bad_rtc": "Az óra kezdete, %1, nem 1980-01-06 utáni idő.",
-		"error.no_button": "A Zeebxnek nincs %1 nevű gombja.",
+		"error.no_button": "A Zeebx emulátornak nincs %1 nevű gombja.",
 		"error.no_file": "A projektben nincs játékfájl.",
 		"error.no_storage": "A konzol tárolóját nem lehetett létrehozni.",
 		"error.not_opened": "„%1” nem nyitható meg.",
