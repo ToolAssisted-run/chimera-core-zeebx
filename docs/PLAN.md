@@ -287,8 +287,9 @@ folder named after the game's package. Um Jogo de Ovos writes a log there;
 Quake II writes a copy of one of its own files and, once in a level, its
 automatic save (`udata/save/current/game.ssv` and `server.ssv`).
 
-- **Out**: Chimera's Export Save Data gets every file under that folder,
-  named by its path.
+- **Out**: Export Save Data (the core's own window, miniBox's ready-made one
+  since Chimera issue 610) gets every file under that folder, named by its
+  path.
 - **In**: a project can hold a "Save data" file, the `.zip` that export
   writes. Its files are put back in the saves folder before the game
   starts. A name that would leave the folder is refused.
